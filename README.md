@@ -20,5 +20,6 @@ This book won't show you how to use another integrated development environment (
 
 # Table of Contents
 
-[Introduction](manuscript/introduction.md)
-[Chapter 1](manuscript/ch01/chapter01.md)
+* [Introduction](manuscript/introduction.md)
+* [Chapter 1](manuscript/ch01/chapter01.md)
+* [Chapter 2](manuscript/ch02/chapter02.md)

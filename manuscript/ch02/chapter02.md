@@ -63,7 +63,7 @@ With `import pytest` we import the pytest module so that we can use the `@pytest
 
 The `skip` marker tells the pytest runner to skip the `test_start` function. The `reason` parameter is optional, but it’s helpful to provide a reason.
 
-Running
+Running this command:
 ```zsh
 $ pytest --verbose test_temperature_converter.py
 ```
@@ -98,29 +98,388 @@ So that I can chat about the weather to my Irish cousins.
 In this chapter, we will use TDD to write a Python program to convert a temperature in degrees Fahrenheit to its equivalent in degrees Celsius.
 
 
-### Step 1: Think (small)
+### Step 1: Think
+
+Don't just think; _think small_.
 
 *Question:* What is the absolutely smallest behavior you can think of?
 
-For me, the smallest behavior is about the freezing temperature. I know that if it's 32°F then I say that the temperature is 0°C.
+For me, the smallest behavior is about the freezing temperature. I know that if it's 32°F outside then I say it's freezing. And I know that that's 0°C.
 
 Let's make that our first test.
 
 We want to test a temperature converter function named `converter` and check that it returns 0.
 
-First, we need to remove the line:
+### Step 2: Red (test)
+
+In this step, you should have one, and only one failing test.
+
+We want to remove the import and the skip marker. Remove these lines and save:
 ```python
+import python
+
 @pytest.mark.skip(reason="Not yet started")
 ```
 
-Then we add the `converter()` function, as follows:
+
+Your `test_temperature_converter.py` file should look like this:
+```python
+def test_start():
+    assert converter() == 0
+```
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+============================================== test session starts ==============================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 1 item                                                                                                
+
+test_temperature_converter.py::test_start FAILED                                                          [100%]
+
+=================================================== FAILURES ====================================================
+__________________________________________________ test_start ___________________________________________________
+
+    def test_start():
+>       assert converter() == 0
+E       NameError: name 'converter' is not defined
+
+test_temperature_converter.py:4: NameError
+============================================ short test summary info ============================================
+FAILED test_temperature_converter.py::test_start - NameError: name 'converter' is not defined
+=============================================== 1 failed in 0.01s ===============================================
+```
+
+#### Three Rules of TDD
+
+TDD has three core rules[^2]:
+
+* Only write production code to make a failing unit test pass.
+* Only write enough of a unit test to make it fail, including compilation errors.
+* Write only the necessary amount of production code required to pass the failing unit test.
+
+[^2]: [Canon TDD](https://tidyfirst.substack.com/p/canon-tdd)
+
+
+### Step 3: Green (code)
+
+Then we need only add the `converter()` function to make the test pass, as follows:
 
 ```python
-import pytest
-
 def converter():
     return 0
 
 def test_start():
     assert converter() == 0
 ```
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+============================================== test session starts ==============================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 1 item                                                                                                
+
+test_temperature_converter.py::test_start PASSED                                                          [100%]
+
+=============================================== 1 passed in 0.00s ===============================================
+```
+
+### Huzzah!
+
+We have 1 passing test! 🎉
+
+Let's review the output.
+
+You may have a couple of questions:
+
+* Why isn't the `converter()` function seen as at test function?
+* Why does pytest see `test_start()`  as a test function?
+
+The answer is that `pytest` implements a standard test discovery convention described in the [Conventions for Python test discovery](https://docs.pytest.org/en/latest/explanation/goodpractices.html#conventions-for-python-test-discovery) of the documentation.
+
+Here's what you need to know:
+
+1. `pytest` looks in the current directory and recursively into sub-directories.
+2. In those directories, it searches for `test_*.py` files.
+3. From those files, `pytest` collects test items that are:
+  - `test` prefixed test functions or methods outside of class
+  - `test` prefixed test functions or methods inside `Test` prefixed test classes
+
+NOTE: We're not going to show examples of how to customize test discovery. However, the folks at `pytest` have documented [Changing standard (Python) test discovery](https://docs.pytest.org/en/latest/example/pythoncollection.html#changing-standard-python-test-discovery).
+
+
+### Step 4: Refactor
+
+We want to clean up or refactor our code. Let's move the `converter()` function to its own file with the name `temperature_converter.py`.
+
+1. Create the `temperature_converter.py` file.
+2. From the `test_temperature_converter.py` file, move this code to the new file:
+```python
+def converter():
+    return 0
+```
+3. Now, save the `temperature_converter.py` and `test_temperature_converter.py` files.
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+============================================== test session starts ==============================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 1 item                                                                                                
+
+test_temperature_converter.py::test_start FAILED                                                          [100%]
+
+=================================================== FAILURES ====================================================
+__________________________________________________ test_start ___________________________________________________
+
+    def test_start():
+>       assert converter() == 0
+E       NameError: name 'converter' is not defined
+
+test_temperature_converter.py:2: NameError
+============================================ short test summary info ============================================
+FAILED test_temperature_converter.py::test_start - NameError: name 'converter' is not defined
+=============================================== 1 failed in 0.01s ===============================================
+```
+
+This failed test is tell you that you need to add the following line to the `test_temperature_converter.py` file so that the function name 'converter' is defined.
+```python
+from temperature_converter import converter
+```
+
+Adding this import to the top of `test_temperature_converter.py` and save.
+
+The `test_temperature_converter.py` file should contain:
+```python
+from temperature_converter import converter
+
+def test_start():
+    assert converter() == 0
+```
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+============================================== test session starts ==============================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 1 item                                                                                                
+
+test_temperature_converter.py::test_start PASSED                                                          [100%]
+
+=============================================== 1 passed in 0.00s ===============================================
+```
+
+### Huzzah!
+
+You have successfully refactored and you are back to 1 passing test! 🎉
+
+Let's go back to thinking again.
+
+### Step 1: Think
+
+Again, we have to _think small_.
+
+*Question:* What is the next smallest behavior you can think of?
+
+For me, the next smallest behavior is about the boiling temperature of water. I know from science class that water boils at 212°F and at 100°C.
+
+Let's make that our second test.
+
+We want to test our temperature converter function and check that it returns 100°C when we pass it 212°F.
+
+I think we're going to need a parameter, but let's focus on adding one failing test.
+
+### Step 2: Red (test)
+
+Let's add this failing test to the bottom of the `test_temperature_converter.py` file:
+```python
+
+def test_when_passed_212_expect_100():
+    assert converter(212) == 100
+```
+
+Save `test_temperature_converter.py` and run:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+This returns:
+```zsh
+============================================== test session starts ==============================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 2 items                                                                                               
+
+test_temperature_converter.py::test_start PASSED                                                          [ 50%]
+test_temperature_converter.py::test_when_passed_212_expect_100 FAILED                                     [100%]
+
+=================================================== FAILURES ====================================================
+________________________________________ test_when_passed_212_expect_100 ________________________________________
+
+    def test_when_passed_212_expect_100():
+>       assert converter(212) == 100
+E       TypeError: converter() takes 0 positional arguments but 1 was given
+
+test_temperature_converter.py:7: TypeError
+============================================ short test summary info ============================================
+FAILED test_temperature_converter.py::test_when_passed_212_expect_100 - TypeError: converter() takes 0 positional arguments but 1 was given
+========================================== 1 failed, 1 passed in 0.01s ==========================================
+```
+
+We can see
+* `test_temperature_converter.py::test_start` PASSED, as expected.
+* `test_temperature_converter.py::test_when_passed_212_expect_100` FAILED, also as expected.
+
+This is a good thing!
+
+### Step 3: Green (code)
+
+Then we need only add the parameter `fahrenheit` to the `converter()` function to make the test pass, as follows:
+
+```python
+def converter(fahrenheit):
+    if fahrenheit == 212:
+        return 100
+    return 0
+```
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+============================= test session starts ==============================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 2 items                                                              
+
+test_temperature_converter.py::test_start FAILED                         [ 50%]
+test_temperature_converter.py::test_when_passed_212_expect_100 PASSED    [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_start __________________________________
+
+    def test_start():
+>       assert converter() == 0
+E       TypeError: converter() missing 1 required positional argument: 'fahrenheit'
+
+test_temperature_converter.py:4: TypeError
+=========================== short test summary info ============================
+FAILED test_temperature_converter.py::test_start - TypeError: converter() missing 1 required positional argument: 'fahrenheit'
+========================= 1 failed, 1 passed in 0.01s ==========================
+```
+
+Oops! It's good that `test_temperature_converter.py::test_when_passed_212_expect_100` PASSED, as expected. However, `test_temperature_converter.py::test_start` FAILED.
+
+The error explains:
+```zsh
+converter() missing 1 required positional argument: 'fahrenheit'
+```
+
+Let's add a reasonable default so that that test will pass again. Here's the new `converter()` function:
+```python
+def converter(fahrenheit=0):
+    if fahrenheit == 212:
+        return 100
+    return 0
+```
+
+Save all the files.
+
+Now, running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+======================================================= test session starts ========================================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 2 items                                                                                                                  
+
+test_temperature_converter.py::test_start PASSED                                                                             [ 50%]
+test_temperature_converter.py::test_when_passed_212_expect_100 PASSED                                                        [100%]
+
+======================================================== 2 passed in 0.00s =========================================================
+```
+
+
+### Step 4: Refactor
+
+Nothing says we have to refactor. If we're happy with everything as it stands, we can certainly move back to Step 1.
+
+For me, the test function name `test_start` is not descriptive of the test. This is really checking that when the converter is passed 32 it should return 0. Let's rename that test to `test_when_passed_32_expect_0`.
+
+The refactored tests look like this:
+```python
+from temperature_converter import converter
+
+def test_when_passed_32_expect_0():
+    assert converter(32) == 0
+
+def test_when_passed_212_expect_100():
+    assert converter(212) == 100
+```
+
+Running:
+```zsh
+$ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
+======================================================= test session starts ========================================================
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
+cachedir: .pytest_cache
+rootdir: /Users/sdr/ ... /code/ch02
+collected 2 items                                                                                                                  
+
+test_temperature_converter.py::test_when_passed_32_expect_0 PASSED                                                           [ 50%]
+test_temperature_converter.py::test_when_passed_212_expect_100 PASSED                                                        [100%]
+
+======================================================== 2 passed in 0.00s =========================================================
+```
+
+### Huzzah!
+
+We've successfully refactored the tests and are back to 2 passing test! 🎉
+
+Let's start thinking again.
+
+
+### Step 1: Think
+
+Although we alway want to _think small_, as we perform TDD our understanding grows. Our thinking can grow as our understanding grows.
+
+The key concept with thinking: **keep the incremental changes small**
