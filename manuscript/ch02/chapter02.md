@@ -108,7 +108,7 @@ For me, the smallest behavior is about the freezing temperature. I know that if 
 
 Let's make that our first test.
 
-We want to test a temperature converter function named `converter` and check that it returns 0.
+We want to test a temperature converter function named `convert` and check that it returns 0.
 
 ### Step 2: Red (test)
 
@@ -125,7 +125,7 @@ import python
 Your `test_temperature_converter.py` file should look like this:
 ```python
 def test_start():
-    assert converter() == 0
+    assert convert() == 0
 ```
 
 Running:
@@ -147,12 +147,12 @@ test_temperature_converter.py::test_start FAILED                                
 __________________________________________________ test_start ___________________________________________________
 
     def test_start():
->       assert converter() == 0
-E       NameError: name 'converter' is not defined
+>       assert convert() == 0
+E       NameError: name 'convert' is not defined
 
 test_temperature_converter.py:4: NameError
 ============================================ short test summary info ============================================
-FAILED test_temperature_converter.py::test_start - NameError: name 'converter' is not defined
+FAILED test_temperature_converter.py::test_start - NameError: name 'convert' is not defined
 =============================================== 1 failed in 0.01s ===============================================
 ```
 
@@ -169,14 +169,14 @@ TDD has three core rules[^2]:
 
 ### Step 3: Green (code)
 
-Then we need only add the `converter()` function to make the test pass, as follows:
+Then we need only add the `convert()` function to make the test pass, as follows:
 
 ```python
-def converter():
+def convert():
     return 0
 
 def test_start():
-    assert converter() == 0
+    assert convert() == 0
 ```
 
 Running:
@@ -205,7 +205,7 @@ Let's review the output.
 
 You may have a couple of questions:
 
-* Why isn't the `converter()` function seen as at test function?
+* Why isn't the `convert()` function seen as at test function?
 * Why does pytest see `test_start()`  as a test function?
 
 The answer is that `pytest` implements a standard test discovery convention described in the [Conventions for Python test discovery](https://docs.pytest.org/en/latest/explanation/goodpractices.html#conventions-for-python-test-discovery) of the documentation.
@@ -223,12 +223,12 @@ NOTE: We're not going to show examples of how to customize test discovery. Howev
 
 ### Step 4: Refactor
 
-We want to clean up or refactor our code. Let's move the `converter()` function to its own file with the name `temperature_converter.py`.
+We want to clean up or refactor our code. Let's move the `convert()` function to its own file with the name `temperature_converter.py`.
 
 1. Create the `temperature_converter.py` file.
 2. From the `test_temperature_converter.py` file, move this code to the new file:
 ```python
-def converter():
+def convert():
     return 0
 ```
 3. Now, save the `temperature_converter.py` and `test_temperature_converter.py` files.
@@ -252,28 +252,28 @@ test_temperature_converter.py::test_start FAILED                                
 __________________________________________________ test_start ___________________________________________________
 
     def test_start():
->       assert converter() == 0
-E       NameError: name 'converter' is not defined
+>       assert convert() == 0
+E       NameError: name 'convert' is not defined
 
 test_temperature_converter.py:2: NameError
 ============================================ short test summary info ============================================
-FAILED test_temperature_converter.py::test_start - NameError: name 'converter' is not defined
+FAILED test_temperature_converter.py::test_start - NameError: name 'convert' is not defined
 =============================================== 1 failed in 0.01s ===============================================
 ```
 
-This failed test is tell you that you need to add the following line to the `test_temperature_converter.py` file so that the function name 'converter' is defined.
+This failed test is tell you that you need to add the following line to the `test_temperature_converter.py` file so that the function name 'convert' is defined.
 ```python
-from temperature_converter import converter
+from temperature_converter import convert
 ```
 
 Adding this import to the top of `test_temperature_converter.py` and save.
 
 The `test_temperature_converter.py` file should contain:
 ```python
-from temperature_converter import converter
+from temperature_converter import convert
 
 def test_start():
-    assert converter() == 0
+    assert convert() == 0
 ```
 
 Running:
@@ -310,7 +310,7 @@ For me, the next smallest behavior is about the boiling temperature of water. I 
 
 Let's make that our second test.
 
-We want to test our temperature converter function and check that it returns 100°C when we pass it 212°F.
+We want to test our `convert()` function and check that it returns 100°C when we pass it 212°F.
 
 I think we're going to need a parameter, but let's focus on adding one failing test.
 
@@ -320,7 +320,7 @@ Let's add this failing test to the bottom of the `test_temperature_converter.py`
 ```python
 
 def test_when_passed_212_expect_100():
-    assert converter(212) == 100
+    assert convert(212) == 100
 ```
 
 Save `test_temperature_converter.py` and run:
@@ -343,12 +343,12 @@ test_temperature_converter.py::test_when_passed_212_expect_100 FAILED           
 ________________________________________ test_when_passed_212_expect_100 ________________________________________
 
     def test_when_passed_212_expect_100():
->       assert converter(212) == 100
-E       TypeError: converter() takes 0 positional arguments but 1 was given
+>       assert convert(212) == 100
+E       TypeError: convert() takes 0 positional arguments but 1 was given
 
 test_temperature_converter.py:7: TypeError
 ============================================ short test summary info ============================================
-FAILED test_temperature_converter.py::test_when_passed_212_expect_100 - TypeError: converter() takes 0 positional arguments but 1 was given
+FAILED test_temperature_converter.py::test_when_passed_212_expect_100 - TypeError: convert() takes 0 positional arguments but 1 was given
 ========================================== 1 failed, 1 passed in 0.01s ==========================================
 ```
 
@@ -360,10 +360,10 @@ This is a good thing!
 
 ### Step 3: Green (code)
 
-Then we need only add the parameter `fahrenheit` to the `converter()` function to make the test pass, as follows:
+Then we need only add the parameter `fahrenheit` to the `convert()` function to make the test pass, as follows:
 
 ```python
-def converter(fahrenheit):
+def convert(fahrenheit):
     if fahrenheit == 212:
         return 100
     return 0
@@ -389,12 +389,12 @@ test_temperature_converter.py::test_when_passed_212_expect_100 PASSED    [100%]
 __________________________________ test_start __________________________________
 
     def test_start():
->       assert converter() == 0
-E       TypeError: converter() missing 1 required positional argument: 'fahrenheit'
+>       assert convert() == 0
+E       TypeError: convert() missing 1 required positional argument: 'fahrenheit'
 
 test_temperature_converter.py:4: TypeError
 =========================== short test summary info ============================
-FAILED test_temperature_converter.py::test_start - TypeError: converter() missing 1 required positional argument: 'fahrenheit'
+FAILED test_temperature_converter.py::test_start - TypeError: convert() missing 1 required positional argument: 'fahrenheit'
 ========================= 1 failed, 1 passed in 0.01s ==========================
 ```
 
@@ -402,12 +402,12 @@ Oops! It's good that `test_temperature_converter.py::test_when_passed_212_expect
 
 The error explains:
 ```zsh
-converter() missing 1 required positional argument: 'fahrenheit'
+convert() missing 1 required positional argument: 'fahrenheit'
 ```
 
-Let's add a reasonable default so that that test will pass again. Here's the new `converter()` function:
+Let's add a reasonable default so that that test will pass again. Here's the new `convert()` function:
 ```python
-def converter(fahrenheit=0):
+def convert(fahrenheit=0):
     if fahrenheit == 212:
         return 100
     return 0
@@ -439,17 +439,17 @@ test_temperature_converter.py::test_when_passed_212_expect_100 PASSED           
 
 Nothing says we have to refactor. If we're happy with everything as it stands, we can certainly move back to Step 1.
 
-For me, the test function name `test_start` is not descriptive of the test. This is really checking that when the converter is passed 32 it should return 0. Let's rename that test to `test_when_passed_32_expect_0`.
+For me, the test function name `test_start` is not descriptive of the test. This is really supposed to check that when the `convert()` function is passed 32 it should return 0. Let's rename that test to `test_when_passed_32_expect_0`.
 
 The refactored tests look like this:
 ```python
-from temperature_converter import converter
+from temperature_converter import convert
 
 def test_when_passed_32_expect_0():
-    assert converter(32) == 0
+    assert convert(32) == 0
 
 def test_when_passed_212_expect_100():
-    assert converter(212) == 100
+    assert convert(212) == 100
 ```
 
 Running:
