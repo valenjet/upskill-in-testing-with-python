@@ -734,7 +734,7 @@ As the name suggests, refactoring is done in the "Refactor" step of the TDD cycl
 
 Refactoring allows you to improve the structure and clarity of the code without changing its behavior.
 
-The automated tests you've built up in prior TDD iterations play a crucial role in supporting refactoring. They provide a safety net that checks and ensures that the behavior of the code-under-test remains unchanged while that code is modified, restructure, or otherwise improved.
+The automated tests you've built up in prior TDD iterations play a crucial role in supporting refactoring. They provide a safety net that checks and ensures that the behavior of the code-under-test remains unchanged while that code is modified, restructured, or otherwise improved.
 
 
 ## Iteration 4
