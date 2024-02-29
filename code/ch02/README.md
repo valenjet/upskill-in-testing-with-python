@@ -185,20 +185,20 @@ You have successfully refactored and you are back to 1 passing test! 🎉
 ## Iteration 2
 
 
-### I2-S1: Think (🤔)
+### I2 - Step 1: Think (🤔)
 
 Let's make that our second test.
 
-Test the `convert()` function such that when we pass 212°F expect that it returns 100°C.
+It will check that the `convert()` function, so that when we pass 212°F we can expect that it returns 100°C.
 
 For this we're going to need a parameter.
 
-But we just focus on adding the one failing test.
+But let's just focus on adding that one failing test.
 
 
-### I2-S2: Test (red 🔴)
+### I2 - Step 2: Test (red 🔴)
 
-Let's add this failing test to the bottom of the `test_temperature_converter.py` file:
+Add this to the bottom of the `test_temperature_converter.py` file:
 ```python
 
 def test_when_passed_212_expect_100():
@@ -210,7 +210,7 @@ Save `test_temperature_converter.py` and run:
 $ pytest --verbose test_temperature_converter.py
 ```
 
-This returns:
+It should return:
 ```zsh
 ============================================== test session starts ==============================================
 platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
@@ -234,17 +234,16 @@ FAILED test_temperature_converter.py::test_when_passed_212_expect_100 - TypeErro
 ========================================== 1 failed, 1 passed in 0.01s ==========================================
 ```
 
-We can see
+Notice:
 * `test_temperature_converter.py::test_start` PASSED, as expected.
 * `test_temperature_converter.py::test_when_passed_212_expect_100` FAILED, also as expected.
 
 This is a good thing!
 
 
-### I2-S3: Code (green 🟩)
+### I2 - Step 3: Code (green 🟩)
 
-Then we need only add the parameter `fahrenheit` to the `convert()` function to make the test pass, as follows:
-
+Add the parameter `fahrenheit` to the `convert()` function to make the test pass, as follows:
 ```python
 def convert(fahrenheit):
     if fahrenheit == 212:
@@ -281,9 +280,10 @@ FAILED test_temperature_converter.py::test_start - TypeError: convert() missing 
 ========================= 1 failed, 1 passed in 0.01s ==========================
 ```
 
-Oops! It's good that `test_temperature_converter.py::test_when_passed_212_expect_100` PASSED, as expected. However, `test_temperature_converter.py::test_start` FAILED.
+#### Oops!
+It's good that `test_temperature_converter.py::test_when_passed_212_expect_100` PASSED, as expected. However, `test_temperature_converter.py::test_start` FAILED unexpectedly.
 
-The error explains:
+The error messages explain:
 ```zsh
 convert() missing 1 required positional argument: 'fahrenheit'
 ```
@@ -298,7 +298,7 @@ def convert(fahrenheit=0):
 
 Save all the files.
 
-Now, running:
+Running:
 ```zsh
 $ pytest --verbose test_temperature_converter.py
 ```
@@ -318,11 +318,13 @@ test_temperature_converter.py::test_when_passed_212_expect_100 PASSED           
 ```
 
 
-### I2-S4: Refactor (tidy 🧹)
+### I2 - Step 4: Refactor (tidy 🧹)
 
-Nothing says we have to refactor. If we're happy with everything as it stands, we can certainly move back to Step 1.
+The test function name `test_start` is not descriptive of the test.
 
-For me, the test function name `test_start` is not descriptive of the test. This is really checking that when the converter is passed 32 it should return 0. Let's rename that test to `test_when_passed_32_expect_0`.
+This really checks that when the converter is passed 32 it should return 0.
+
+Let's rename that test to `test_when_passed_32_expect_0`.
 
 The refactored tests look like this:
 ```python
@@ -356,36 +358,27 @@ test_temperature_converter.py::test_when_passed_212_expect_100 PASSED           
 
 We've successfully refactored the tests and are back to 2 passing test! 🎉
 
-Let's start thinking again.
-
 
 ## Iteration 3
 
+Let's start thinking again.
 
-### I3-S1: Think (🤔)
+### I3 - Step 1: Think (🤔)
 
-Although we alway want to _think small_, as we perform TDD our understanding grows. Our thinking can grow as our understanding grows.
-
-The key concept with thinking: **keep the incremental changes small**
-
-From a conversion chart, we learn some facts
-* 0°C = 32°F
-* 100°C = 212°F
-* 40°C = 104°F
-
-With that information, we create a "truth table".
-
+From a temperature conversion chart, we can create a "truth table".
 | Fahrenheit   | Celsius     |
 |-------------:|------------:|
 |       32°F   |       0°C   |
 |      212°F   |     100°C   |
 |      104°F   |      40°C   |
 
-The first two _truths_ are already tested. Let's add the next truth.
+The first two _truths_ are already tested.
 
-### I3-S2: Test (red 🔴)
+Let's add the next truth.
 
-Let's add this failing test to the bottom of the `test_temperature_converter.py` file:
+### I3 - Step 2: Test (red 🔴)
+
+Add the failing test to the bottom of the `test_temperature_converter.py` file:
 ```python
 
 def test_when_passed_104_expect_40():
@@ -423,12 +416,12 @@ FAILED test_temperature_converter.py::test_when_passed_104_expect_40 - assert 0 
 ============================================== 1 failed, 2 passed in 0.01s ==============================================
 ```
 
-As expected, only `test_when_passed_104_expect_40` failed.
+As expected, only the one test, named `test_when_passed_104_expect_40`, failed.
 
 
-### I3-S3: Code (green 🟩)
+### I3 - Step 3: Code (green 🟩)
 
-Let's write just enough code to make all the tests pass.
+Write just enough code to make all the tests pass.
 
 And that looks like this:
 ```python
@@ -463,7 +456,7 @@ test_temperature_converter.py::test_when_passed_104_expect_40 PASSED            
 ```
 
 
-### I3-S4: Refactor (tidy 🧹)
+### I3 - Step 4: Refactor (tidy 🧹)
 
 Let's skip the refactoring step and move to the next iteration.
 
@@ -471,7 +464,7 @@ Let's skip the refactoring step and move to the next iteration.
 ## Iteration 4
 
 
-### I4-S1: Think (🤔)
+### I4 - Step 1: Think (🤔)
 
 From a conversion chart, we learn another fact:
 * -20°C = -4°F
@@ -485,12 +478,13 @@ Let's add that to our "truth table".
 |      104°F   |      40°C   | 🟩 |
 |       -4°F   |     -20°C   | 🤔 |
 
-The first three _truths_ are already tested. Let's test that next truth.
+The first three _truths_ are tested and passing.
 
+Let's test that next truth.
 
-### I3-S2: Test (red 🔴)
+### I3 - Step 2: Test (red 🔴)
 
-Let's add this failing test to the bottom of the `test_temperature_converter.py` file:
+Add the failing test to the bottom of the `test_temperature_converter.py` file:
 ```python
 
 def test_when_passed_minus_4_expect_minus_20():
@@ -529,12 +523,9 @@ FAILED test_temperature_converter.py::test_when_passed_minus_4_expect_minus_20 -
 ============================================== 1 failed, 3 passed in 0.01s ==============================================
 ```
 
+### I3 - Step 3: Code (green 🟩)
 
-### I3-S3: Code (green 🟩)
-
-Let's write just enough code to make all the tests pass.
-
-And that looks like this:
+Write just enough code to make all the tests pass, like this:
 ```python
 # temperature_converter.py
 
@@ -569,9 +560,7 @@ test_temperature_converter.py::test_when_passed_minus_4_expect_minus_20 PASSED  
 =================================================== 4 passed in 0.01s ===================================================
 ```
 
-All four tests are passing!
-
-And the truth table looks like this:
+All four tests are passing and the truth table looks like this:
 
 | Fahrenheit   | Celsius     |    |
 |-------------:|------------:|---:|
@@ -581,18 +570,15 @@ And the truth table looks like this:
 |       -4°F   |     -20°C   | 🟩 |
 
 
-### I3-S4: Refactor (tidy 🧹)
+### I3 - Step 4: Refactor (tidy 🧹)
 
-We could go on forever with the truth table concept, but we want to handle any arbitrary temperature in degrees Fahrenheit and convert it to the correct degrees Celsius.
+We won't go on forever with the truth table concept.
 
-Wiktionary defines [refactor](https://en.wiktionary.org/wiki/refactor) as:
-> To rewrite existing source code in order to improve its readability, reusability or structure without affecting its meaning or behavior.
+But we do want to rewrite the code-under-test to improve its readability and structure; without affecting its behavior.
 
-So, this is the right place to restructure the code-under-test so as to improve it without altering it's functionality. For this, we might like to have a mathematical formula.
+Let's get the Business Analyst to provide us with the formula.
 
-Let's ask our trusted Business Analyst to provide us with the formula.
-
-Here is what we get:
+And here's what we get:
 ```text
 To convert temperatures in degrees Fahrenheit to Celsius, 
 multiply by 9, divide by 5, and add 32.
@@ -669,28 +655,21 @@ FAILED test_temperature_converter.py::test_when_passed_minus_4_expect_minus_20 -
 =================================================== 4 failed in 0.02s ===================================================
 ```
 
+#### Yikes!
+
 We got 4 failed tests! What happened!?! 🤯
 
 
 #### Requirement Defect
 
-Here's what happened: _we uncovered a defect in the formula_ (a.k.a. a requirement defect).
+Here's what happened: _we uncovered a defect in the formula_ (a.k.a. a requirement defect). We were given the wrong formula.
 
-The Business Analyst unwittingly (and we assume with the best of intentions) provided us the incorrect formula.
-
-But the good news, and the beauty of TDD, is that our four failing tests revealed the issue.
-
-Our tests were built up from known truths. They helped to guard us from moving forward with a defective formula.
-
-Now, let's go back to that Business Analyst.
-
-We can use a calculator to show that the formula does not work for our four test cases.
+Let's go back to that Business Analyst.
 
 
 #### Correct Formula
 
-Now, we receive the correct formula.
-
+Here's the correct formula:
 ```text
 To convert temperatures from Fahrenheit to Celsius
 
@@ -734,7 +713,7 @@ As the name suggests, refactoring is done in the "Refactor" step of the TDD cycl
 
 Refactoring allows you to improve the structure and clarity of the code without changing its behavior. The automated tests are there to help.
 
-The automated tests you've built up in prior TDD iterations play a crucial role in supporting refactoring. They provide a _safety net_ that helps ensure the behavior of the code-under-test remains unchanged while that code is modified, restructured, or otherwise improved.
+The automated tests you've built up so far in the prior TDD iterations play a crucial role in supporting refactoring. They provide a _safety net_ that helps ensure the behavior of the code-under-test remains unchanged while that code is modified, restructured, or otherwise improved.
 
 Good automated testing liberates refactoring.
 
@@ -743,15 +722,13 @@ Good automated testing liberates refactoring.
 
 Let's get real and talk about the real number line.
 
-### I4-S1: Think (🤔)
+### I4 - Step 1: Think (🤔)
 
-There are many numbers between the whole numbers we've been testing so far.
+What about fractional degrees Fahrenheit?
 
-And people commonly refer to a person's body temperate with a decimals, such as having a fever of 105.8°F.
+Let's write a test that checks that 105.8°F = 41°C
 
-So, let's write a test that checks that 105.8°F = 41°C[^1]
-
-### I4-S2: Test (red 🔴)
+### I4 - Step 2: Test (red 🔴)
 
 Here's my next test:
 ```python
@@ -784,11 +761,11 @@ test_temperature_converter.py::test_when_passed_105_pt_8_expect_41 PASSED       
 
 Wait! ✋
 
-That's not a failing test. Is that an error or did Python help us out here?
+That's not a failing test.
 
-Let's see if we can write another test that fails to meet expectation.
+Write another test that fails to meet expectation.
 
-For 105.6°F we can expect 40.89°C.
+With an input of 105.6°F we can expect it to return 40.89°C.
 
 Here's the test code:
 ```python
@@ -833,7 +810,7 @@ FAILED test_temperature_converter.py::test_when_passed_105_pt_6_expect_40_pt_89 
 
 There it is! One failed test 🔴
 
-### I4-S3: Code (green 🟩)
+### I4 - Step 3: Code (green 🟩)
 
 Let's write just enough code to allow that test to pass. But what's the problem?
 
@@ -844,7 +821,7 @@ assert 40.888888888888886 == 40.89
 
 Python `round()` is the built-in function that rounds. It takes two numeric arguments, `n` and `ndigits`, and returns the number `n` rounded to `ndigits`
 
-Let's round to 1 digit by setting the value of `ndigits` to 1.
+Let's round to 2 digits by setting the value of `ndigits` to 2.
 
 ```python
 def convert(fahrenheit=0):
@@ -869,33 +846,31 @@ test_temperature_converter.py::test_when_passed_212_expect_100 PASSED           
 test_temperature_converter.py::test_when_passed_104_expect_40 PASSED                                              [ 50%]
 test_temperature_converter.py::test_when_passed_minus_4_expect_minus_20 PASSED                                    [ 66%]
 test_temperature_converter.py::test_when_passed_105_pt_8_expect_41 PASSED                                         [ 83%]
-test_temperature_converter.py::test_when_passed_105_pt_6_expect_40_pt_9 PASSED                                    [100%]
+test_temperature_converter.py::test_when_passed_105_pt_6_expect_40_pt_89 PASSED                                   [100%]
 
 =================================================== 6 passed in 0.01s ===================================================
 ```
 
 Back to passing! 👍
 
-### I4-S4: Refactor (tidy 🧹)
+### I4 - Step 4: Refactor (tidy 🧹)
 
-Looking at the function, I don't like a few things:
+Looking at the function, there are a few things not to like:
 
 1. There is no sensible default for the input, yet we have the default `fahrenheit=0`.
 2. We're doing a lot in just this one line:
 ```python
 return round((5 * (fahrenheit - 32)) / 9, 2)
 ```
-3. Let's add in some type hints for the function. We expect a `float` and we return a `float`.
+3. We could add some type hints for the function. We expect a `float` and we return a `float`.
 
-Let's tidy those up, make things more readable, and see what happens.
-
-Make the changes in `temperature_converter.py` and save. Here's what I did:
+Make the changes in `temperature_converter.py`:
 ```python
 # temperature_converter.py
 
 def convert(fahrenheit: float) -> float:
     celsius = (5 * (fahrenheit - 32)) / 9
-    return round(celsius, 2)
+    return float(round(celsius, 2))
 ```
 
 Running:
@@ -911,29 +886,21 @@ Returns:
 
 Some excellent refactoring 😎
 
-Notice that using the `--quiet` option (or abbreviated to `-q`) returns a lot less output. Let's use that for a while.
+Notice that using the `--quiet` option (or abbreviated to `-q`) returns a lot less output.
+
+Let's use the `--quiet` option going forward.
 
 ## Iteration 5
 
-Let's perform boundary analysis to cover rounding scenarios.
+Let's perform boundary analysis to cover rounding scenarios. But how do we find these special cases?
 
-Here's some of what you need to know about floating-point arithmetic[^2]:
-- Any number that cannot be derived from exact powers of 2 cannot be accurately represented as a floating point number and requires approximation.
-- Occasionally, the closest approximation might be less than the actual number.
-
-But how do we find these special cases?
-
-### I5-S1: Think (🤔)
+### I5 - Step 1: Think (🤔)
 
 When might `round(celsius, 2)` fail us?
 
 Well, the number 36.815 degrees Fahrenheit equals 2.675 degrees Celsius but might erroneously return the number 2.68 instead of 2.67
 
-The reason is that the Fahrenheit temperatures whose exact conversion to Celsius, when rounded to 2 significant figures, falls just above a rounding boundary.
-
-This is case where floating-point arithmetic might result in a slightly lower approximation due to binary representation limitations.
-
-### I5-S2: Test (red 🔴)
+### I5 - Step 2: Test (red 🔴)
 
 Let's add that test to the bottom of the `test_temperature_converter.py` file:
 ```python
@@ -980,6 +947,8 @@ Returns:
 
 How on earth are we going to find our next failing test?
 
+#### Prompting ChatGPT
+
 Let's prompt ChatGPT
 ```text
 Assume the role of a professional software tester who is testing a temperature converter function that takes a temperature in degrees Fahrenheit and returns the corresponding temperature in degrees Celsius, rounded to 2 significant figure.
@@ -1022,9 +991,9 @@ That's good news.
 
 ## Iteration 6
 
-It's a good idea to perform boundary-value analysis to cover all scenarios.
+Now, tt's always a good idea to perform our own _boundary-value analysis_. We want to cover all reasonable scenarios.
 
-Boundary-value analysis is about finding the limits of acceptable values, which includes looking at the following:
+It's important to remember that boundary-value analysis is about finding the limits of acceptable values, which includes looking at:
 - All invalid values
 - Maximum values
 - Minimum values
@@ -1033,7 +1002,7 @@ Boundary-value analysis is about finding the limits of acceptable values, which 
 - Values just outside a boundary
 - Values that behave uniquely, such as zero or one
 
-### I6-S1: Think (🤔)
+### I6 - Step 1: Think (🤔)
 
 Let's prompt ChatGPT again to get some ideas:
 ```text
@@ -1094,22 +1063,18 @@ Boundary-value analysis for the temperature converter function involves identify
 These inputs are designed to explore how the temperature converter function handles a variety of boundary conditions, from extreme values to those just around critical thresholds like the freezing and boiling points of water, as well as absolute zero.
 ```
 
+That's very helpful.
+
 #### Slightly Below Absolute Zero
 
-Testing for this _out of bounds_ value caught my eye:
+Let's test for this _out of bounds_ value:
 > *Slightly Below Absolute Zero:* `-459.68°F` to test handling of impossible values.
-
-Question: _What is absolute zero in degrees Fahrenheit?_
-
-[Wikipedia](https://en.wikipedia.org/wiki/Absolute_zero) says:
 
 Absolute zero is −459.67°F, which equals −273.15°C.
 
-Question: _What would we want the function to do if it receives an input of less than −459.67°F?_
+Let's write that failing test.
 
-Let's make that failing test.
-
-### I6-S2: Test (red 🔴)
+### I6 - Step 2: Test (red 🔴)
 
 Not sure how to write the failing test? Just `assert False` in the test code.
 
@@ -1143,11 +1108,11 @@ FAILED test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_As
 
 There's a failing test, but is it really the test we want?
 
-We want to know that the test failed because it did not raise the expected `AssertionError` exception.
+We want the test to fail because it did NOT raise the expected `AssertionError` error.
 
 For this we'll use [pytest.raises()](https://docs.pytest.org/en/latest/how-to/assert.html#assertions-about-expected-exceptions)
 
-At the top of `test_temperature_converter.py` import `pytest`, like this:
+At the top of `test_temperature_converter.py` import `pytest`:
 ```python
 # test_temperature_converter.py
 
@@ -1156,14 +1121,13 @@ from temperature_converter import convert
 
 ```
 
-And at the bottom of `test_temperature_converter.py` let's use `pytest.raises()` like this:
+At the bottom of `test_temperature_converter.py`, use `pytest.raises()` like this:
 ```python
 
 def test_when_passed_minus_459_pt_68_expect_AssertionError():
     with pytest.raises(AssertionError):
         convert(-459.68)
 ```
-
 
 Running:
 ```zsh
@@ -1172,7 +1136,7 @@ $ pytest --quiet test_temperature_converter.py
 
 Returns:
 ```zsh
-.........F                                                                                                        [100%]
+.........F                                                                                      [100%]
 ======================================================= FAILURES ========================================================
 _______________________________ test_when_passed_minus_459_pt_68_expect_AssertionError _______________________________
 
@@ -1188,11 +1152,9 @@ FAILED test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_As
 
 That looks like it failed properly.
 
-### I6-S3: Code (green 🟩)
+### I6 - Step 3: Code (green 🟩)
 
-Now, let's make that failing test pass.
-
-The simplest thing that will make it pass is to check for absolute zero.
+Now, the simplest thing that will make it pass is to check for absolute zero.
 ```python
 # temperature_converter.py
 
@@ -1207,19 +1169,19 @@ def convert(fahrenheit: float) -> float:
 And it passes.
 ```zsh
 $ pytest --quiet test_temperature_converter.py                   
-..........                                                                                                        [100%]
+..........                                                                                     [100%]
 10 passed in 0.01s
 ```
 
-### I6-S4: Refactor (tidy 🧹)
+### I6 - Step 4: Refactor (tidy 🧹)
 
 Now, let's do some major refactoring of our tests with parameterization.
 
-As the tests are written, it becomes apparent that many of the test methods are exactly the same code, only using different values as input.
+Many of the test methods are exactly the same test code. They just provide different values as input.
 
 `pytest` offers ways to call the same test method with different input data, which is described in the [How to parametrize fixtures and test functions](https://docs.pytest.org/en/latest/how-to/parametrize.html) section of the documentation.
 
-Let's replicate the top two tests with parameterization:
+Let's just replicate the top two tests with parameterization:
 ```python
 # test_temperature_converter.py
 
@@ -1237,18 +1199,26 @@ def test_when_passed_valid_input_expect_proper_result(
 
 ```
 
-Running the tests:
+Running:
 ```zsh
 $ pytest --quiet test_temperature_converter.py
-............                                                                                                      [100%]
+```
+
+Returns:
+```zsh
+............                                                                                [100%]
 12 passed in 0.01s
 ```
 
-Note that there are 12 passed tests instead of two.
+Note that there are 12 passed tests instead of two. That looks correct.
 
 Running the tests using the verbose option:
 ```zsh
 $ pytest --verbose test_temperature_converter.py
+```
+
+Returns:
+```zsh
 ================================= test session starts ==================================
 platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
 cachedir: .pytest_cache
@@ -1315,7 +1285,9 @@ test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_Assertion
 
 #### Parameterized Test Cases
 
-Once these tests cases are parameterized, the entire `test_temperature_converter.py` looks like this:
+Let's parameterize all the "valid input" test cases.
+
+Now, the entire `test_temperature_converter.py` looks like this:
 ```python
 # test_temperature_converter.py
 
@@ -1370,13 +1342,13 @@ test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_Assertion
 ========================================== 10 passed in 0.01s ==========================================
 ```
 
-There we are, we have 10 passed!
+There we have it, 10 passed! As expected.
 
 ## Iteration 7
 
 Let's review where we are and what we still need to do.
 
-1. These are the 9 "valid input" test cases that pass:
+1. There are 9 "valid input" test cases that pass:
 
 | Fahrenheit   | Celsius     |    |
 |-------------:|------------:|---:|
@@ -1390,16 +1362,16 @@ Let's review where we are and what we still need to do.
 |    221.1°F   |  105.06°C   | 🟩 |
 |   50.009°F   |   10.01°C   | 🟩 |
 
-2. Here is the 1 "invalid input" that returns the expected error:
+2. There is 1 "invalid input" that returns the expected error:
 
 | Fahrenheit   | Scenario                  | Expectation      |    |
 |-------------:|--------------------------:|-----------------:|---:|
 |  -459.68°F   | Less than absolute zero   | AssertionError   | 🟩 |
 
 
-### I7-S1: Think (🤔)
+### I7 - Step 1: Think (🤔)
 
-To get very thorough with the testing, let's review the boundary-value analysis.
+To be very thorough with the testing, let's review the boundary-value analysis generated above.
 
 * Invalid Values
   - Extremely low value like -459.68°F is an invalid input, given that it's below absolute zero.
@@ -1448,7 +1420,7 @@ To get very thorough with the testing, let's review the boundary-value analysis.
 |  10000.1°F   | Slightly above a high arbitrary value | AssertionError   | 🤔 |
 
 
-### I7-S2: Test (red 🔴)
+### I7 - Step 2: Test (red 🔴)
 
 With parameterized testing, we can check all the valid scenarios very quickly.
 
@@ -1486,7 +1458,7 @@ Running:
 $ pytest --quiet test_temperature_converter.py
 ```
 
-Returns
+Returns:
 ```zsh
 ..........F..........                                                                     [100%]
 =========================================== FAILURES ============================================
@@ -1538,15 +1510,15 @@ FAILED test_temperature_converter.py::test_param_input_expect_result[-459.67--27
 
 There's our 1 failed test!
 
-That is the minimum valid value (absolute zero) scenario where -459.67°F should return exactly -273.15°C.
+It's the minimum valid value (absolute zero) scenario where -459.67°F should return exactly -273.15°C.
 
-### I7-S3: Code (green 🟩)
+### I7 - Step 3: Code (green 🟩)
 
 Absolute zero is a special, physical constant value that is defined as exactly -273.15°C.
 
-To make this test pass, let return that constant when the input is -459.67°F.
+To make this test pass, return that constant when the input is -459.67°F.
 
-The function now looks like this:
+Code the function to look like this:
 ```python
 # temperature_converter.py
 
@@ -1570,14 +1542,13 @@ $ pytest --quiet test_temperature_converter.py
 
 Bravo! 👏 👏 👏
 
-### I7-S4: Refactor (tidy 🧹)
+### I7 - Step 4: Refactor (tidy 🧹)
 
-I don't like that there are two magic _absolute zero_ values in our code:
+There are two magic numbers in our `convert()` function:
 * Absolute zero in degrees Fahrenheit = -459.67
 * Absolute zero in degrees Celsius = -273.15
 
-Let's refactor those into constants, as follows:
-
+Refactor those into constants:
 ```python
 # temperature_converter.py
 
@@ -1606,16 +1577,18 @@ Ready for the next iteration?
 
 ## Iteration 8
 
-In this iteration, we'll address more expected errors. Specifically, the slightly above a high arbitrary value.
+In this iteration, we'll address more expected errors. Specifically, the _slightly above a high arbitrary value_ scenario.
 
-### I8-S1: Think (🤔)
+### I8 - Step 1: Think (🤔)
 
-We've thought about 10000°F as the maximum valid temperature but we don't enforce that in the code. Let's add that behavior.
+Let's say we agree that 10000°F should be the maximum valid input temperature.
+
+But that's not enforced in the code. Let's add that behavior.
 
 
-### I8-S2: Test (red 🔴)
+### I8 - Step 2: Test (red 🔴)
 
-Add this to the bottom of the `test_temperature_converter.py` file and save:
+Add this to the bottom of the `test_temperature_converter.py`:
 ```python
 
 def test_when_passed_10000_pt_1_expect_AssertionError():
@@ -1640,11 +1613,11 @@ FAILED test_temperature_converter.py::test_when_passed_10000_pt_1_expect_Asserti
 1 failed, 21 passed in 0.02s
 ```
 
-### I8-S3: Code (green 🟩)
+### I8 - Step 3: Code (green 🟩)
 
-Now, add the input check to the `convert()` function in `temperature_converter.py` and save.
+Let's add the input check to the `convert()` function in `temperature_converter.py` and save.
 
-This should pass the test.
+This code should pass the test:
 ```python
 # temperature_converter.py
 
@@ -1670,7 +1643,7 @@ $ pytest --quiet test_temperature_converter.py
 22 passed in 0.01s
 ```
 
-### I8-S4: Refactor (tidy 🧹)
+### I8 - Step 4: Refactor (tidy 🧹)
 
 Ready to refactor? Let's move the maximum valid input into a constant.
 
@@ -1726,15 +1699,17 @@ We have covered a lot of valid and invalid scenarios:
 |  -459.68°F   | Less than absolute zero               |   AssertionError | 🟩 |
 |  10000.1°F   | Slightly above a high arbitrary value |   AssertionError | 🟩 |
 
-### I9-S1: Think (🤔)
+### I9 - Step 1: Think (🤔)
 
-You will notice that the assertion errors don't explain what went wrong. Let's add a message to each of the exceptions so the reason is clear.
+You will notice that the assertion errors don't explain what went wrong.
 
-When the input value is greater than the maximum temperature in degrees Fahrenheit, we want the message to return as, "Input cannot be greater than 10000".
+Let's add a message to each of the exceptions so the reason is clear.
 
-### I9-S2: Test (red 🔴)
+When the input value is greater than the maximum temperature in degrees Fahrenheit, we want the message to return, "Input cannot be greater than 10000".
 
-Let's write that test and add it to the end of the `test_temperature_converter.py` file and save:
+### I9 - Step 2: Test (red 🔴)
+
+Let's write that test and add it to the end of the `test_temperature_converter.py` file:
 ```python
 
 def test_when_passed_10000_pt_1_expect_raises_message():
@@ -1768,12 +1743,12 @@ FAILED test_temperature_converter.py::test_when_passed_10000_pt_1_expect_raises_
 1 failed, 22 passed in 0.02s
 ```
 
-We have 1 failed test; just what we're looking for!
+Now, we have our 1 failed test. Just what we're looking for!
 
 
-### I9-S3: Code (green 🟩)
+### I9 - Step 3: Code (green 🟩)
 
-Add the formatted message string to the `assert` statement as shown and save:
+Add the formatted message string to the `assert` statement, as follows:
 ```python
 # temperature_converter.py
 
@@ -1804,7 +1779,7 @@ $ pytest --quiet test_temperature_converter.py
 Hurray! 🥳
 
 
-### I9-S4: Refactor (tidy 🧹)
+### I9 - Step 4: Refactor (tidy 🧹)
 
 Let's not refactor anything at this time.
 
@@ -1818,16 +1793,16 @@ We just covered one of two similar behaviors:
 |  10000.1°F   | Slightly above a high arbitrary value |   Proper message | 🟩 |
 |  -459.68°F   | Less than absolute zero               |   Proper message | 🤔 |
 
-### I10-S1: Think (🤔)
+### I10 - Step 1: Think (🤔)
 
-This second assertion error needs a message so the reason is clear.
+This second assertion error needs a message to make the reason for the error clear.
 
 When the input value is absolute zero in degrees Fahrenheit, we want the message to return as, "Input cannot be below -459.67".
 
-### I10-S2: Test (red 🔴)
+### I10 - Step 2: Test (red 🔴)
 
 
-Let's write that test and add it to the end of the `test_temperature_converter.py` file and save:
+Write that test and add it to the end of the `test_temperature_converter.py` file:
 ```python
 
 def test_when_passed_459_pt_68_expect_raises_message():
@@ -1863,8 +1838,9 @@ FAILED test_temperature_converter.py::test_when_passed_459_pt_68_expect_raises_m
 
 We see the 1 failed happened as expected, and we move to the next step.
 
-### I10-S3: Code (green 🟩)
+### I10 - Step 3: Code (green 🟩)
 
+Add the formatted message string to the `assert` statement, as follows:
 ```python
 # temperature_converter.py
 
@@ -1892,10 +1868,10 @@ $ pytest --quiet test_temperature_converter.py
 24 passed in 0.01s
 ```
 
-Yes, **24 passed** -- You are awesome! 🤩
+Yes, **24 passed** -- Awesome! 🤩
 
 
-### I10-S4: Refactor (tidy 🧹)
+### I10 - Step 4: Refactor (tidy 🧹)
 
 Let's comment our code to be sure anyone who reads the code knows what's what.
 
@@ -1925,41 +1901,24 @@ def convert(fahrenheit: float) -> float:
     return float(round(celsius, 2))
 ```
 
+#### Unnecessary Conversion
+
 Notice that last line? Is that `float()` conversion necessary?
 
-Let's change the line to this and and save:
+Let's change that line:
 ```python
     return round(celsius, 2)
 ```
 
-Let's rerun the tests to see if everything still passes.
+Rerun the tests to ensure that everything still passes.
 ```zsh
 $ pytest --quiet test_temperature_converter.py
 ........................                                                                                                                                                               [100%]
 24 passed in 0.01s
 ```
 
-Excellent! See how the automated tests liberate refactoring. We changed our code, reran the tests, and we're fully confident that we didn't break anything.
+Excellent! We changed our code, reran the tests, and we're fully confident that we didn't break anything.
 
-This is how well-written automated tests liberate refactoring.
+That's how well-written automated tests liberate refactoring.
 
-
-## Conclusion
-
-In this chapter we learned:
-* [provide summary details here]
-* Automated tests liberate refactoring.
-
-
-## Exercises
-
-Try some of the following exercises on your own:
-* Think about adding a parameter, such as `precision:int =2`, to the `convert()` function so that the result can be rounded to `precision` digits after the decimal point.
-  - Using test-driven development, add a new test to define the behavior.
-  - See just that one new test fails, as expected.
-  - Add only enough code to get that one test to pass.
-  - Make sure that all the existing tests pass with the new parameter.
-  - Refactor by using the test suite as a safety net to ensure that everything continues to work as intended.
-
-[^1]: I looked this up on [metric-conversions.org](https://www.metric-conversions.org/temperature/fahrenheit-to-celsius.htm))
-[^2]: Read more at [What Every Computer Scientist Should Know About Floating-Point Arithmetic](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
+[Back to the table of contents](../README.md)
