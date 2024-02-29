@@ -1,2 +1,4 @@
 introduction.md
 ch01/chapter01.md
+ch02/chapter02.md
+ch03/chapter03.md

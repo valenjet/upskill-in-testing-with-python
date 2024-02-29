@@ -991,7 +991,7 @@ That's good news.
 
 ## Iteration 6
 
-Now, tt's always a good idea to perform our own _boundary-value analysis_. We want to cover all reasonable scenarios.
+Now, it's always a good idea to perform our own _boundary-value analysis_. We want to cover all reasonable scenarios.
 
 It's important to remember that boundary-value analysis is about finding the limits of acceptable values, which includes looking at:
 - All invalid values
