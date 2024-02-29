@@ -1116,7 +1116,7 @@ Not sure how to write the failing test? Just `assert False` in the test code.
 Let's add a failing test to the bottom of the `test_temperature_converter.py` file:
 ```python
 
-def test_when_passed_LT_minus_459_pt_67_expect_AssertionError():
+def test_when_passed_minus_459_pt_68_expect_AssertionError():
     assert False
 ```
 
@@ -1129,15 +1129,15 @@ Returns:
 ```zsh
 .........F                                                                                                        [100%]
 ======================================================= FAILURES ========================================================
-_______________________________ test_when_passed_LT_minus_459_pt_67_expect_AssertionError _______________________________
+_______________________________ test_when_passed_minus_459_pt_68_expect_AssertionError _______________________________
 
-    def test_when_passed_LT_minus_459_pt_67_expect_AssertionError():
+    def test_when_passed_minus_459_pt_68_expect_AssertionError():
 >       assert False
 E       assert False
 
 test_temperature_converter.py:33: AssertionError
 ================================================ short test summary info ================================================
-FAILED test_temperature_converter.py::test_when_passed_LT_minus_459_pt_67_expect_AssertionError - assert False
+FAILED test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_AssertionError - assert False
 1 failed, 9 passed in 0.03s
 ```
 
@@ -1159,9 +1159,9 @@ from temperature_converter import convert
 And at the bottom of `test_temperature_converter.py` let's use `pytest.raises()` like this:
 ```python
 
-def test_when_passed_LT_minus_459_pt_67_expect_AssertionError():
+def test_when_passed_minus_459_pt_68_expect_AssertionError():
     with pytest.raises(AssertionError):
-        assert  convert(-459.68)
+        convert(-459.68)
 ```
 
 
@@ -1174,15 +1174,15 @@ Returns:
 ```zsh
 .........F                                                                                                        [100%]
 ======================================================= FAILURES ========================================================
-_______________________________ test_when_passed_LT_minus_459_pt_67_expect_AssertionError _______________________________
+_______________________________ test_when_passed_minus_459_pt_68_expect_AssertionError _______________________________
 
-    def test_when_passed_LT_minus_459_pt_67_expect_AssertionError():
+    def test_when_passed_minus_459_pt_68_expect_AssertionError():
 >       with pytest.raises(AssertionError):
 E       Failed: DID NOT RAISE <class 'AssertionError'>
 
 test_temperature_converter.py:34: Failed
 ================================================ short test summary info ================================================
-FAILED test_temperature_converter.py::test_when_passed_LT_minus_459_pt_67_expect_AssertionError - Failed: DID NOT RAISE <class 'AssertionError'>
+FAILED test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_AssertionError - Failed: DID NOT RAISE <class 'AssertionError'>
 1 failed, 9 passed in 0.06s
 ```
 
@@ -1266,7 +1266,7 @@ test_temperature_converter.py::test_when_passed_105_pt_6_expect_40_pt_89 PASSED 
 test_temperature_converter.py::test_when_passed_36_pt_815_expect_2_pt_67 PASSED  [ 75%]
 test_temperature_converter.py::test_when_passed_221_pt_1_expect_105_pt_06 PASSED [ 83%]
 test_temperature_converter.py::test_when_passed_50_pt_009_expect_10_pt_01 PASSED [ 91%]
-test_temperature_converter.py::test_when_passed_LT_minus_459_pt_67_expect_AssertionError PASSED [100%]
+test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_AssertionError PASSED [100%]
 
 ================================== 12 passed in 0.01s ==================================
 ```
@@ -1308,7 +1308,7 @@ test_temperature_converter.py::test_when_passed_105_pt_6_expect_40_pt_89 PASSED 
 test_temperature_converter.py::test_when_passed_36_pt_815_expect_2_pt_67 PASSED                [ 75%]
 test_temperature_converter.py::test_when_passed_221_pt_1_expect_105_pt_06 PASSED               [ 83%]
 test_temperature_converter.py::test_when_passed_50_pt_009_expect_10_pt_01 PASSED               [ 91%]
-test_temperature_converter.py::test_when_passed_LT_minus_459_pt_67_expect_AssertionError PASSED [100%]
+test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_AssertionError PASSED [100%]
 
 ========================================= 12 passed in 0.01s =========================================
 ```
@@ -1338,9 +1338,9 @@ def test_param_input_expect_result(
         expected_result):
     assert convert(valid_input) == expected_result
 
-def test_when_passed_LT_minus_459_pt_67_expect_AssertionError():
+def test_when_passed_minus_459_pt_68_expect_AssertionError():
     with pytest.raises(AssertionError):
-        assert convert(-459.68)
+        convert(-459.68)
 ```
 
 Running:
@@ -1351,9 +1351,9 @@ $ pytest --verbose test_temperature_converter.py
 Returns:
 ```zsh
 ========================================= test session starts ==========================================
-platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/training/valenjet/upskill-in-testing-with-python/venv/bin/python3.11
+platform darwin -- Python 3.11.7, pytest-8.0.2, pluggy-1.4.0 -- /Users/sdr/ ... /venv/bin/python3.11
 cachedir: .pytest_cache
-rootdir: /Users/sdr/training/valenjet/upskill-in-testing-with-python/sols/ch02
+rootdir: /Users/sdr/ ... /code/ch02
 collected 10 items                                                                                     
 
 test_temperature_converter.py::test_param_input_expect_result[32-0] PASSED                       [ 10%]
@@ -1365,10 +1365,601 @@ test_temperature_converter.py::test_param_input_expect_result[105.6-40.89] PASSE
 test_temperature_converter.py::test_param_input_expect_result[36.815-2.67] PASSED                [ 70%]
 test_temperature_converter.py::test_param_input_expect_result[221.1-105.06] PASSED               [ 80%]
 test_temperature_converter.py::test_param_input_expect_result[50.009-10.01] PASSED               [ 90%]
-test_temperature_converter.py::test_when_passed_LT_minus_459_pt_67_expect_AssertionError PASSED  [100%]
+test_temperature_converter.py::test_when_passed_minus_459_pt_68_expect_AssertionError PASSED  [100%]
 
 ========================================== 10 passed in 0.01s ==========================================
 ```
+
+There we are, we have 10 passed!
+
+## Iteration 7
+
+Let's review where we are and what we still need to do.
+
+1. These are the 9 "valid input" test cases that pass:
+
+| Fahrenheit   | Celsius     |    |
+|-------------:|------------:|---:|
+|       32°F   |       0°C   | 🟩 |
+|      212°F   |     100°C   | 🟩 |
+|      104°F   |      40°C   | 🟩 |
+|       -4°F   |     -20°C   | 🟩 |
+|    105.8°F   |      41°C   | 🟩 |
+|    105.6°F   |   40.89°C   | 🟩 |
+|   36.815°F   |    2.67°C   | 🟩 |
+|    221.1°F   |  105.06°C   | 🟩 |
+|   50.009°F   |   10.01°C   | 🟩 |
+
+2. Here is the 1 "invalid input" that returns the expected error:
+
+| Fahrenheit   | Scenario                  | Expectation      |    |
+|-------------:|--------------------------:|-----------------:|---:|
+|  -459.68°F   | Less than absolute zero   | AssertionError   | 🟩 |
+
+
+### I7-S1: Think (🤔)
+
+To get very thorough with the testing, let's review the boundary-value analysis.
+
+* Invalid Values
+  - Extremely low value like -459.68°F is an invalid input, given that it's below absolute zero.
+  - Extremely high value like 10000°F is an invalid input, given that the hottest air temperature measured anywhere on Earth was 134°F.
+* Maximum and Minimum Values (valid)
+  - Maximum valid value, test just _below_ the maximum valid temperature.
+  - Minimum valid value, test just _above_ -459.67°F (absolute zero).
+* Values on a Boundary (valid)
+  - Freezing point of water (just below): 31.9°F =>  -0.06°C
+  - Freezing point of water (just above): 32.1°F =>   0.06°C
+  - Boiling point of water (just below): 211.9°F =>  99.94°C
+  - Boiling point of water (just above): 212.1°F => 100.06°C
+* Values Within a Boundary (valid)
+  - Just above absolute zero: -459.66°F => -273.14°C
+  - Just below a high arbitrary value: 9999.9°F => 5537.77°C
+* Values Outside a Boundary (invalid)
+  - Slightly below absolute zero: -459.68°F ( 🟩 already checking this scenario)
+  - Slightly above a high arbitrary value: 10000.1°F (with 10000°F as the maximum valid temperature)
+* Values That Behave Uniquely (valid)
+  - Zero Fahrenheit: 0°F => -17.78°C
+  - One Fahrenheit: 1°F => -17.22°C
+  - Intersection point: -40°F => -40°C (where Fahrenheit equals Celsius)
+
+
+#### Untested Valid Scenarios
+
+| Fahrenheit   | Scenario                              | Expectation      |    |
+|-------------:|:-------------------------------------:|-----------------:|---:|
+|    10000°F   | Maximum valid value                   |        5537.78°C | 🤔 |
+|  -459.67°F   | Minimum valid value                   |        -273.15°C | 🤔 |
+|     31.9°F   | Freezing point of water (just below)  |          -0.06°C | 🤔 |
+|     32.1°F   | Freezing point of water (just above)  |           0.06°C | 🤔 |
+|    211.9°F   | Boiling point of water (just below)   |          99.94°C | 🤔 |
+|    212.1°F   | Boiling point of water (just above)   |         100.06°C | 🤔 |
+|  -459.66°F   | Just above absolute zero              |        -273.14°C | 🤔 |
+|   9999.9°F   | Just below a high arbitrary value     |        5537.72°C | 🤔 |
+|        0°F   | Zero Fahrenheit                       |         -17.78°C | 🤔 |
+|        1°F   | One Fahrenheit                        |         -17.22°C | 🤔 |
+|      -40°F   | Intersection point                    |            -40°C | 🤔 |
+
+#### Untested Error Scenarios
+
+| Fahrenheit   | Scenario                              | Expectation      |    |
+|-------------:|:-------------------------------------:|-----------------:|---:|
+|  -459.68°F   | Less than absolute zero               | AssertionError   | 🟩 |
+|  10000.1°F   | Slightly above a high arbitrary value | AssertionError   | 🤔 |
+
+
+### I7-S2: Test (red 🔴)
+
+With parameterized testing, we can check all the valid scenarios very quickly.
+
+```python
+@pytest.mark.parametrize("valid_input, expected_result", [
+    (32, 0),
+    (212, 100),
+    (104, 40),
+    (-4, -20),
+    (105.8, 41),
+    (105.6, 40.89),
+    (36.815, 2.67),
+    (221.1, 105.06),
+    (50.009, 10.01),
+    (10000, 5537.78),
+    (-459.67, -273.15),
+    (31.9, -0.06),
+    (32.1, 0.06),
+    (211.9, 99.94),
+    (212.1, 100.06),
+    (-459.66, -273.14),
+    (9999.9, 5537.72),
+    (0, -17.78),
+    (1, -17.22),
+    (-40, -40)],
+)
+def test_param_input_expect_result(
+        valid_input, 
+        expected_result):
+    assert convert(valid_input) == expected_result
+```
+
+Running:
+```zsh
+$ pytest --quiet test_temperature_converter.py
+```
+
+Returns
+```zsh
+..........F..........                                                                     [100%]
+=========================================== FAILURES ============================================
+________________________ test_param_input_expect_result[-459.67--273.15] ________________________
+
+valid_input = -459.67, expected_result = -273.15
+
+    @pytest.mark.parametrize("valid_input, expected_result", [
+        (32, 0),
+        (212, 100),
+        (104, 40),
+        (-4, -20),
+        (105.8, 41),
+        (105.6, 40.89),
+        (36.815, 2.67),
+        (221.1, 105.06),
+        (50.009, 10.01),
+        (10000, 5537.78),
+        (-459.67, -273.15),
+        (31.9, -0.06),
+        (32.1, 0.06),
+        (211.9, 99.94),
+        (212.1, 100.06),
+        (-459.66, -273.14),
+        (9999.9, 5537.72),
+        (0, -17.78),
+        (1, -17.22),
+        (-40, -40)],
+    )
+    def test_param_input_expect_result(
+            valid_input,
+            expected_result):
+>       assert convert(valid_input) == expected_result
+
+test_temperature_converter.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+fahrenheit = -459.67
+
+    def convert(fahrenheit: float) -> float:
+>       assert fahrenheit > -459.67
+E       AssertionError
+
+temperature_converter.py:4: AssertionError
+==================================== short test summary info ====================================
+FAILED test_temperature_converter.py::test_param_input_expect_result[-459.67--273.15] - AssertionError
+1 failed, 20 passed in 0.02s
+```
+
+There's our 1 failed test!
+
+That is the minimum valid value (absolute zero) scenario where -459.67°F should return exactly -273.15°C.
+
+### I7-S3: Code (green 🟩)
+
+Absolute zero is a special, physical constant value that is defined as exactly -273.15°C.
+
+To make this test pass, let return that constant when the input is -459.67°F.
+
+The function now looks like this:
+```python
+# temperature_converter.py
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == -459.67:
+        return -273.15
+
+    assert fahrenheit > -459.67
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+Running `pytest` confirms that all tests are passing.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+.....................                                                                                                                                                 [100%]
+21 passed in 0.01s
+```
+
+Bravo! 👏 👏 👏
+
+### I7-S4: Refactor (tidy 🧹)
+
+I don't like that there are two magic _absolute zero_ values in our code:
+* Absolute zero in degrees Fahrenheit = -459.67
+* Absolute zero in degrees Celsius = -273.15
+
+Let's refactor those into constants, as follows:
+
+```python
+# temperature_converter.py
+
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+Running `pytest` confirms that all tests are passing.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+.....................                                                                                                                                                 [100%]
+21 passed in 0.01s
+```
+
+Ready for the next iteration?
+
+## Iteration 8
+
+In this iteration, we'll address more expected errors. Specifically, the slightly above a high arbitrary value.
+
+### I8-S1: Think (🤔)
+
+We've thought about 10000°F as the maximum valid temperature but we don't enforce that in the code. Let's add that behavior.
+
+
+### I8-S2: Test (red 🔴)
+
+Add this to the bottom of the `test_temperature_converter.py` file and save:
+```python
+
+def test_when_passed_10000_pt_1_expect_AssertionError():
+    with pytest.raises(AssertionError):
+        convert(10000.1)
+```
+
+Running `pytest` now results in 1 failed test.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+.....................F                                                                                                                                                [100%]
+================================================================================= FAILURES ==================================================================================
+_____________________________________________________________ test_when_passed_10000_pt_1_expect_AssertionError _____________________________________________________________
+
+    def test_when_passed_10000_pt_1_expect_AssertionError():
+>       with pytest.raises(AssertionError):
+E       Failed: DID NOT RAISE <class 'AssertionError'>
+
+test_temperature_converter.py:38: Failed
+========================================================================== short test summary info ==========================================================================
+FAILED test_temperature_converter.py::test_when_passed_10000_pt_1_expect_AssertionError - Failed: DID NOT RAISE <class 'AssertionError'>
+1 failed, 21 passed in 0.02s
+```
+
+### I8-S3: Code (green 🟩)
+
+Now, add the input check to the `convert()` function in `temperature_converter.py` and save.
+
+This should pass the test.
+```python
+# temperature_converter.py
+
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    assert fahrenheit <= 10000
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+And it does!
+```zsh
+$ pytest --quiet test_temperature_converter.py
+......................                                                                                                                                                [100%]
+22 passed in 0.01s
+```
+
+### I8-S4: Refactor (tidy 🧹)
+
+Ready to refactor? Let's move the maximum valid input into a constant.
+
+Move the maximum valid input into a constant and save:
+```python
+# temperature_converter.py
+
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+MAX_FAHRENHEIT = 10000
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    assert fahrenheit <= MAX_FAHRENHEIT
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+Run all the tests to make sure nothing fails.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+......................                                                                                                                                                [100%]
+22 passed in 0.01s
+```
+
+We have 22 passed! All the tests are running. All the tests are passing.
+
+We've improved the code, and we're confident that everything is working as we intended.
+
+## Iteration 9
+
+We have covered a lot of valid and invalid scenarios:
+
+| Fahrenheit   | Scenario                              | Expectation      |    |
+|-------------:|:-------------------------------------:|-----------------:|---:|
+|    10000°F   | Maximum valid value                   |        5537.78°C | 🟩 |
+|  -459.67°F   | Minimum valid value                   |        -273.15°C | 🟩 |
+|     31.9°F   | Freezing point of water (just below)  |          -0.06°C | 🟩 |
+|     32.1°F   | Freezing point of water (just above)  |           0.06°C | 🟩 |
+|    211.9°F   | Boiling point of water (just below)   |          99.94°C | 🟩 |
+|    212.1°F   | Boiling point of water (just above)   |         100.06°C | 🟩 |
+|  -459.66°F   | Just above absolute zero              |        -273.14°C | 🟩 |
+|   9999.9°F   | Just below a high arbitrary value     |        5537.72°C | 🟩 |
+|        0°F   | Zero Fahrenheit                       |         -17.78°C | 🟩 |
+|        1°F   | One Fahrenheit                        |         -17.22°C | 🟩 |
+|      -40°F   | Intersection point                    |            -40°C | 🟩 |
+|  -459.68°F   | Less than absolute zero               |   AssertionError | 🟩 |
+|  10000.1°F   | Slightly above a high arbitrary value |   AssertionError | 🟩 |
+
+### I9-S1: Think (🤔)
+
+You will notice that the assertion errors don't explain what went wrong. Let's add a message to each of the exceptions so the reason is clear.
+
+When the input value is greater than the maximum temperature in degrees Fahrenheit, we want the message to return as, "Input cannot be greater than 10000".
+
+### I9-S2: Test (red 🔴)
+
+Let's write that test and add it to the end of the `test_temperature_converter.py` file and save:
+```python
+
+def test_when_passed_10000_pt_1_expect_raises_message():
+    with pytest.raises(AssertionError) as actual_raises:
+        convert(10000.1)
+    assert 'Input cannot be greater than 10000' == str(actual_raises.value) 
+```
+
+Running the test suite:
+```zsh
+$ pytest --quiet test_temperature_converter.py
+```
+
+Returns:
+```zsh
+......................F                                             [100%]
+================================ FAILURES =================================
+____________ test_when_passed_10000_pt_1_expect_raises_message ____________
+
+    def test_when_passed_10000_pt_1_expect_raises_message():
+        with pytest.raises(AssertionError) as actual_raises:
+            convert(10000.1)
+>       assert 'Input cannot be greater than 10000' == str(actual_raises.value)
+E       AssertionError: assert 'Input cannot...er than 10000' == ''
+E         
+E         + Input cannot be greater than 10000
+
+test_temperature_converter.py:48: AssertionError
+========================= short test summary info =========================
+FAILED test_temperature_converter.py::test_when_passed_10000_pt_1_expect_raises_message - AssertionError: assert 'Input cannot...er than 10000' == ''
+1 failed, 22 passed in 0.02s
+```
+
+We have 1 failed test; just what we're looking for!
+
+
+### I9-S3: Code (green 🟩)
+
+Add the formatted message string to the `assert` statement as shown and save:
+```python
+# temperature_converter.py
+
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+MAX_FAHRENHEIT = 10000
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    assert fahrenheit <= MAX_FAHRENHEIT, f'Input cannot be greater than {MAX_FAHRENHEIT}'
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+Rerun all the tests to confirm that everything passes.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+.......................                                                                                                                                                                [100%]
+23 passed in 0.01s
+```
+
+Hurray! 🥳
+
+
+### I9-S4: Refactor (tidy 🧹)
+
+Let's not refactor anything at this time.
+
+
+## Iteration 10
+
+We just covered one of two similar behaviors:
+
+| Fahrenheit   | Scenario                              | Expectation      |    |
+|-------------:|:-------------------------------------:|-----------------:|---:|
+|  10000.1°F   | Slightly above a high arbitrary value |   Proper message | 🟩 |
+|  -459.68°F   | Less than absolute zero               |   Proper message | 🤔 |
+
+### I10-S1: Think (🤔)
+
+This second assertion error needs a message so the reason is clear.
+
+When the input value is absolute zero in degrees Fahrenheit, we want the message to return as, "Input cannot be below -459.67".
+
+### I10-S2: Test (red 🔴)
+
+
+Let's write that test and add it to the end of the `test_temperature_converter.py` file and save:
+```python
+
+def test_when_passed_459_pt_68_expect_raises_message():
+    with pytest.raises(AssertionError) as actual_raises:
+        convert(-459.68)
+    assert 'Input cannot be below -459.67' == str(actual_raises.value) 
+```
+
+Running the test suite:
+```zsh
+$ pytest --quiet test_temperature_converter.py
+```
+
+Returns:
+```zsh
+.......................F                                                                                                                                                               [100%]
+========================================================================================== FAILURES ==========================================================================================
+______________________________________________________________________ test_when_passed_459_pt_68_expect_raises_message ______________________________________________________________________
+
+    def test_when_passed_459_pt_68_expect_raises_message():
+        with pytest.raises(AssertionError) as actual_raises:
+            convert(-459.68)
+>       assert 'Input cannot be below -459.67' == str(actual_raises.value)
+E       AssertionError: assert 'Input cannot...below -459.67' == ''
+E         
+E         + Input cannot be below -459.67
+
+test_temperature_converter.py:53: AssertionError
+================================================================================== short test summary info ===================================================================================
+FAILED test_temperature_converter.py::test_when_passed_459_pt_68_expect_raises_message - AssertionError: assert 'Input cannot...below -459.67' == ''
+1 failed, 23 passed in 0.02s
+```
+
+We see the 1 failed happened as expected, and we move to the next step.
+
+### I10-S3: Code (green 🟩)
+
+```python
+# temperature_converter.py
+
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+MAX_FAHRENHEIT = 10000
+
+def convert(fahrenheit: float) -> float:
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    assert fahrenheit <= MAX_FAHRENHEIT, f'Input cannot be greater than {MAX_FAHRENHEIT}'
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT, f'Input cannot be below {ABS_ZERO_FAHRENHEIT}'
+
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    return float(round(celsius, 2))
+```
+
+Running all the tests ...
+```zsh
+$ pytest --quiet test_temperature_converter.py
+........................                                                                                                                                                               [100%]
+24 passed in 0.01s
+```
+
+Yes, **24 passed** -- You are awesome! 🤩
+
+
+### I10-S4: Refactor (tidy 🧹)
+
+Let's comment our code to be sure anyone who reads the code knows what's what.
+
+```python
+# temperature_converter.py
+
+# these are physical constants
+ABS_ZERO_CELSIUS = -273.15
+ABS_ZERO_FAHRENHEIT = -459.67
+
+# limit the input
+MAX_FAHRENHEIT = 10000
+
+def convert(fahrenheit: float) -> float:
+    # short-circuit for absolute zero
+    if fahrenheit == ABS_ZERO_FAHRENHEIT:
+        return ABS_ZERO_CELSIUS
+
+    # guard against invalid input
+    assert fahrenheit <= MAX_FAHRENHEIT, f'Input cannot be greater than {MAX_FAHRENHEIT}'
+    assert fahrenheit > ABS_ZERO_FAHRENHEIT, f'Input cannot be below {ABS_ZERO_FAHRENHEIT}'
+
+    # this is the mathematical formula
+    celsius = (5 * (fahrenheit - 32)) / 9
+
+    # be sure to round to 2 decimal places
+    return float(round(celsius, 2))
+```
+
+Notice that last line? Is that `float()` conversion necessary?
+
+Let's change the line to this and and save:
+```python
+    return round(celsius, 2)
+```
+
+Let's rerun the tests to see if everything still passes.
+```zsh
+$ pytest --quiet test_temperature_converter.py
+........................                                                                                                                                                               [100%]
+24 passed in 0.01s
+```
+
+Excellent! See how the automated tests liberate refactoring. We changed our code, reran the tests, and we're fully confident that we didn't break anything.
+
+This is how well-written automated tests liberate refactoring.
+
+
+## Conclusion
+
+In this chapter we learned:
+* [provide summary details here]
+* Automated tests liberate refactoring.
+
+
+## Exercises
+
+Try some of the following exercises on your own:
+* Think about adding a parameter, such as `precision:int =2`, to the `convert()` function so that the result can be rounded to `precision` digits after the decimal point.
+  - Using test-driven development, add a new test to define the behavior.
+  - See just that one new test fails, as expected.
+  - Add only enough code to get that one test to pass.
+  - Make sure that all the existing tests pass with the new parameter.
+  - Refactor by using the test suite as a safety net to ensure that everything continues to work as intended.
 
 [^1]: I looked this up on [metric-conversions.org](https://www.metric-conversions.org/temperature/fahrenheit-to-celsius.htm))
 [^2]: Read more at [What Every Computer Scientist Should Know About Floating-Point Arithmetic](https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html)
