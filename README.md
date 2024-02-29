@@ -23,3 +23,4 @@ This book won't show you how to use another integrated development environment (
 * [Introduction](manuscript/introduction.md)
 * [Chapter 1](manuscript/ch01/chapter01.md)
 * [Chapter 2](manuscript/ch02/chapter02.md)
+* [Chapter 3](manuscript/ch03/chapter03.md)
