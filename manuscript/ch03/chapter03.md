@@ -55,25 +55,12 @@ Here is a list of ways to make sure test code is maintainable:
 * Keep test methods short; strive for fewer than ten lines of code.
 * Limit the test actions to one or two lines of code.
 * Make one and only one primary assertion in the test method.
-* Use the var keyword whenever it is allowed.
 * Create a context class to encapsulate repeating arrangement code.
 * Write helper classes to hold code that is common to tests across the suite.
 * Pass data as arguments into the test method to data-drive the testing.
 
 
-Here’s a cheat sheet to make your test code better:
-
-- **Naming is important**: Pick the right naming convention for your test functions, classes, modules and folders.
-- **Use a consistent pattern for the test method body**: Consistency is key.
-- **Short and sweet**: Aim to keep your test methods under ten lines.
-- **Limit the test actions to one or two lines of code**: Don’t make your tests run a marathon.
-- **One primary assertion rule**: Focus to one primary thing you’re checking per test.
-- **Context classes are your friends**: Test code that sets up your tests goes in a context class.
-- **Helper classes to the rescue**: Common code across your tests? Offload it into helper classes.
-- **Data-drive your tests**: Feeding different data into your tests? Pass them as parameters.
-
-
-#### Naming Convention
+### Naming Convention
 
 Diving into the jungle of test code naming conventions, you'll find a bunch of different paths, each with its own cheerleaders and naysayers. This book goes with the flow of the [Conventions for Python test discovery](https://docs.pytest.org/en/latest/explanation/goodpractices.html#conventions-for-python-test-discovery) that `pytest` uses.
 
@@ -82,19 +69,33 @@ Here’s the lowdown on how `pytest` finds tests:
 
 - It will look in subdirectories, unless the subdirectory is on the `norecursedirs` list.
 
-- Within those directories, it’s looking for files named `test_*.py` or `*_test.py`.
+- Within those directories, it’s looking for files named `test_*.py` (or named `*_test.py`).
 
-- From those files, `pytest` collects test items:
-  - Functions or methods outside classes that start with `test_`.
-  - Inside classes that start with a `Test` prefix (and no `__init__` method), it looks for methods that start with `test_`.
+#### Test Functions
 
-The method to naming your test code with `pytest` should follow this convention.
+`pytest` collects test items from within theses `test_*.py` files. It looks for functions outside classes that start with `test_`.
 
-#### Test functions and classes
+So, for every test function outside a class, we'll start its name off with `test_`, such as `test_whatchamacallit`.
 
-- For a test function or method, we'll start its name off with `test_`, such as `test_whatchamacallit`
-- And if we're testing the `Whatchamacallit` class, start them with a `Test` prefix, such as `TestWhatchamacallit`.
+Three important facts need to be clear from the test function's name:
+- Method-under-test
+- Conditions under which the test is performed
+- Expected result needed to pass the test
 
+The test method naming convention fits a readability pattern and clearly communicates the intention of the test. The following are examples of test methods that follow the naming convention:
+- `test_compute_payment_with_provided_loan_data_expect_proper_amount`
+- `test_approve_loan_when_loan_data_is_valid_expect_loan_save_called_exactly_once`
+- `test_compute_balance_for_negative_balance_scenarios_expect_out_of_range_error`
+
+This test function naming convention is used by the code samples and throughout the book. The important principle is to establish a naming convention that clearly states how the system-under-test is expected to behave under the conditions provided by the test.
+
+#### Test Classes
+
+Also, `pytest` collects test classes from within the `test_*.py` files it discovers. It looks for classes that start with a `Test` prefix (and no `__init__` method). For example, a class that start them with a `Test` prefix, such as `TestWhatchamacallit`, is a test class. Again, it looks for methods of the `Test` class that start with `test_`.
+
+Up until now, we've been writing test functions and organizing them into test modules within a directory in the file system. This approach does a pretty good job and meets the needs of most projects.
+
+By using a _Test class_ approach, `pytest` does allow us to group tests together using classes. The can be helpful.
 
 #### Directory and file structure
 
@@ -127,26 +128,31 @@ The method to naming your test code with `pytest` should follow this convention.
 │   └── conftest.py
 ```
 
+**NOTE:** We'll cover the `conftest.py` files and the special `__init__.py` files you see under the `tests` folder in a later section. We'll also revisit the topic of how to abbreviate test function names when they get too long.
 
-#### More about names
 
-Test code is a lot different than production code. Test code should never see the light of production. Because of that, we name test code differently.
+#### Naming Is Important
 
-We need a naming convention for our test code that's clear and makes our lives easier. Why? Because when tests fail, we want to know why without having to decipher the output. Keep it distinct, keep it clear, and make our test code as maintenance-friendly as possible.
+Since test code is a lot different than production code and serves a completely different purpose that the code-under-test, we name test functions differently.
+
+We use a naming convention for our test code that's clear and makes our lives easier when test fail.
+
+We want to pinpoint why the test failed without needing to decipher the output. We keep the function names distinct, structured, and clear. This makes our test code as maintenance-friendly as possible.
 
 The naming convention presented here is helpful in these ways:
 - The test directory and filename identifies the modules being tested.
-- The test class name identifies the class-under-test, which is the class that the tests are testing.
-- The test method (or function) name describes two key aspects of the test:
+- The test function name describes two key aspects of the test:
+  - The function under test
   - Conditions of the test
   - Expected results of the test
+- The test class name identifies the class-under-test, which is the class that the tests are testing.
 
-For example, in the `test_temperature_converter.py` file the `test_when_passed_10000_pt_1_expect_raises_message` method:
+For example, in Chapter 2, the `test_temperature_converter.py` file contained the `test_when_passed_10000_pt_1_expect_raises_message` function:
 - tests the temperature converter (we get that from the file name)
 - when passed 10000.1 as input
 - expect that it raises an error with a message
 
-This example test class tests the `compute_payment()` method of the `Loan` class.
+Here is another example that uses the `TestLoan` class to group tests that test the `compute_payment()` method of the `Loan` class.
 ```python
 # test_loan.py
 
@@ -171,7 +177,63 @@ class TestLoan():
 
 That's the idea for now.
 
-**NOTE:** We'll cover the `conftest.py` files and the special `__init__.py` files you see under the `tests` folder in a later section. We'll also revisit the topic of abbreviating test method (or function) names.
+
+### The Test Function Body
+When talking about the heart of our test functions, there’s a bit of a convention we should follow. It’s about making sure anyone who jumps into the project can dive into the test code without needing to get oriented. If we all stick to the approach, getting up to speed is a breeze.
+
+#### Arrange-Act-Assert
+I recommend using the Arrange-Act-Assert approach, sometimes called Triple-A or the 3As. There are other ways to structure your test code, but the 3As is a solid choice for organizing your test functions.
+
+This is how it breaks down:
+- **Arrange**: First, you line up preconditions, dependencies, and anything else your test needs to get started.
+- **Act**: Here you execute the action or the main event that your test is checking.
+- **Assert**: This is where you make sure everything that was supposed to happen did happen. If things aren’t working as expected, this is where your test raises an error.
+
+I believe you should add the comments `# Arrange`, `# Act`, and `# Assert` in your test function. It’s a neon sign that guides anyone reading your test through the flow. Keeping things organized like this helps make your tests super clear.
+
+
+
+### Keep Test Short
+
+Keep test methods short; strive for fewer than ten lines of code.
+
+### Limit Test Actions
+
+Limit the test actions to one or two lines of code.
+
+### Primary Assertion
+
+Make one and only one primary assertion in the test method.
+
+### Test Context Classes
+
+Create a context class to encapsulate repeating arrangement code.
+
+### Test Helpers
+
+Write helper classes to hold code that is common to tests across the suite.
+
+### Data Scenarios
+
+Pass data as arguments into the test method to data-drive the testing.
+
+
+
+
+
+
+## Conclusion
+
+Here’s a cheat sheet to make your test code better:
+
+- **Naming is important**: Pick the right naming convention for your test functions, classes, modules and folders.
+- **Use a consistent pattern for the test method body**: Consistency is key.
+- **Short and sweet**: Aim to keep your test methods under ten lines.
+- **Limit the test actions to one or two lines of code**: Don’t make your tests run a marathon.
+- **One primary assertion rule**: Focus to one primary thing you’re checking per test.
+- **Context classes are your friends**: Test code that sets up your tests goes in a context class.
+- **Helper classes to the rescue**: Common code across your tests? Offload it into helper classes.
+- **Data-drive your tests**: Feeding different data into your tests? Pass them as parameters.
 
 
 ## Focus on writing maintainable test code
@@ -187,3 +249,6 @@ That's the idea for now.
 ## Perform boundary-value analysis to cover all scenarios
 ## Use stubs to test in isolation
 ## Use only one mock when testing interaction
+
+
+
