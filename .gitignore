@@ -168,3 +168,7 @@ cython_debug/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# ignore ALL files in ANY directory named tmp or temp
+tmp/
+temp/
