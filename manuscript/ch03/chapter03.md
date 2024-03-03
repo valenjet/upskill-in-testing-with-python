@@ -329,15 +329,15 @@ This approach minimizes ambiguity, ensuring that if the test fails, the reason i
 
 Assertions can be categorized based on their verification methods, including:
 
-| ||
-|:---|:---|
-| Comparison | Validating the equivalence, difference, or relational comparison between expected and actual values. |
-| Expected Interaction | Ensuring a dependency is called a specific number of times, with certain arguments, or validating that it is not called with invalid arguments. |
-| Exception Handling | Confirming an expected exception is thrown under specific conditions. |
+| Category              | Description |
+|:----------------------|:------------|
+| Comparison            | Validating the equivalence, difference, or relational comparison between expected and actual values. |
+| Expected Interaction  | Ensuring a dependency is called a specific number of times, with certain arguments, or validating that it is not called with invalid arguments. |
+| Exception Handling    | Confirming an expected exception is thrown under specific conditions. |
 | Collection Assertions | Verifying the presence or absence of elements within a collection. |
 | Instance Verification | Checking whether an object is null, not null, or an instance of a specific type. |
-| Boolean Checks | Assessing the truthfulness of an expression. |
-| Constraint-Based | Evaluating whether an instance meets a set of defined constraints. |
+| Boolean Checks        | Assessing the truthfulness of an expression. |
+| Constraint-Based      | Evaluating whether an instance meets a set of defined constraints. |
 
 #### Primary Versus Secondary Assertions
 
@@ -502,7 +502,7 @@ Test Helper Classes provide functions that address general needs across multiple
 
 #### Implementing Test Helper Functions
 
-Consider translating the concept of generating random strings for test data. Such a utility can be particularly useful for generating dynamic values like names, addresses, or any string-based data, with the flexibility to specify length or complexity through optional parameters. Listing 3-8 provides the `build_name_string` function as an example of how to generate random names.
+Consider translating the concept of generating random strings for test data. Such a utility can be particularly useful for generating dynamic values like names, addresses, or any string-based data, with the flexibility to specify length or complexity through optional parameters. Listing 3-8 provides the `build_name_string()` function as an example of how to generate random names. The test code uses `build_name_string()` to generate a large, random name.
 
 **NOTE:** Because `pytest` ignores classes that do not begin with 'Test', we use the `helper_test*.py` file name and prefix these class names with `HelperTest`.
 
@@ -539,7 +539,6 @@ class HelperTestData:
         return first_letter + other_letters
 ```
 
-Now, `build_name_string` generates a large random name.
 ```python
 # test_data_helper.py
 
