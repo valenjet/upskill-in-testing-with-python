@@ -68,7 +68,8 @@ The chapters fall under the following topics:
 * [Chapter 3](../ch03/chapter03.md): Automated Testing
 * [Chapter 4](../ch04/chapter04.md): Testing Frameworks
 * [Chapter 5](../ch05/chapter05.md): Code Analysis
-* [Chapter 6](../ch06/chapter06.md):
+* [Chapter 6](../ch06/chapter06.md): Python Testing in VS Code
+* [Chapter 7](../ch07/chapter07.md): 
 
 
 [Continue to Chapter 1](../ch01/chapter01.md)
