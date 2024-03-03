@@ -1,4 +1,4 @@
-# Chapter 1: Getting Started with pytest
+# Chapter 1: Getting Started
 
 To install pytest on a Mac using the zsh shell, you will typically use Python's package manager, pip. Before proceeding, ensure that you have Python and pip installed on your system. Here are the steps to follow:
 
