@@ -7,8 +7,15 @@ Coverage will be around 50-60%.
 
 import pytest
 from calculator import (
-    add, subtract, multiply, divide, power,
-    factorial, is_even, absolute_value, calculate_percentage
+    add,
+    subtract,
+    multiply,
+    divide,
+    power,
+    factorial,
+    is_even,
+    absolute_value,
+    calculate_percentage,
 )
 
 

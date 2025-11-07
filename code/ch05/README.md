@@ -1,6 +1,6 @@
 # Chapter 5: Code Analysis - Code Examples
 
-This directory contains code examples demonstrating code coverage analysis with pytest-cov, linting with flake8, and code formatting with black, as covered in Chapter 5 of "Upskill in Testing with Python".
+This directory contains code examples demonstrating code coverage analysis with pytest-cov, linting with flake8, code formatting with black, and advanced static analysis with pylint, as covered in Chapter 5 of "Upskill in Testing with Python".
 
 ## Overview
 
@@ -8,6 +8,7 @@ The examples demonstrate:
 1. How to measure and improve code coverage using pytest-cov
 2. How to identify and fix code style violations using flake8
 3. How to automatically format code using black
+4. How to perform comprehensive static analysis using pylint
 
 ## Files in This Directory
 
@@ -17,22 +18,25 @@ The examples demonstrate:
 - **`example_clean.py`** - The same code refactored to follow PEP 8 conventions and pass flake8 checks.
 - **`example_unformatted.py`** - Code with inconsistent formatting before black processing.
 - **`example_formatted.py`** - The same code after black automatic formatting.
+- **`example_with_pylint_issues.py`** - Python code with various pylint warnings demonstrating common issues.
+- **`example_pylint_clean.py`** - The same functionality refactored to achieve a perfect 10/10 pylint score.
 
 ### Test Files
 - **`test_calculator_basic.py`** - Basic test suite with intentionally incomplete coverage (~69%), demonstrating what happens when you don't test all code paths.
 - **`test_calculator_improved.py`** - Comprehensive test suite achieving 100% coverage, including edge cases, error conditions, and parametrized tests.
 
 ### Configuration Files
-- **`.flake8`** - Configuration file for flake8 with common settings and customizations.
+- **`.flake8`** - Configuration file for flake8 with common settings and customizations (black-compatible).
+- **`.pylintrc`** - Configuration file for pylint with project-specific settings.
 - **`pyproject.toml`** - Configuration file for black with project-specific settings.
 - **`pre-commit-config.yaml`** - Pre-commit hook configuration for black.
 
 ## Prerequisites
 
-Ensure you have pytest, pytest-cov, flake8, and black installed:
+Ensure you have pytest, pytest-cov, flake8, black, and pylint installed:
 
 ```bash
-pip install pytest pytest-cov flake8 black
+pip install pytest pytest-cov flake8 black pylint
 ```
 
 ## Running the Examples
@@ -298,26 +302,182 @@ black --line-length=100 example_unformatted.py
 
 ---
 
+## Advanced Static Analysis with pylint
+
+### Example 11: Identifying Complex Code Issues
+
+Run pylint on code with various quality issues:
+
+```bash
+pylint example_with_pylint_issues.py
+```
+
+**Expected Output (partial):**
+```
+************* Module example_with_pylint_issues
+example_with_pylint_issues.py:13:0: C0103: Constant name "myGlobalVar" doesn't conform to UPPER_CASE naming style (invalid-name)
+example_with_pylint_issues.py:17:0: R0913: Too many arguments (10/5) (too-many-arguments)
+example_with_pylint_issues.py:23:0: R0914: Too many local variables (18/15) (too-many-locals)
+example_with_pylint_issues.py:45:0: C0115: Missing class docstring (missing-class-docstring)
+example_with_pylint_issues.py:65:0: R0912: Too many branches (13/12) (too-many-branches)
+example_with_pylint_issues.py:96:0: R0911: Too many return statements (8/6) (too-many-return-statements)
+example_with_pylint_issues.py:119:0: C0103: Function name "CalculateTotal" doesn't conform to snake_case naming style (invalid-name)
+example_with_pylint_issues.py:140:0: W0102: Dangerous default value [] as argument (dangerous-default-value)
+example_with_pylint_issues.py:152:11: W0718: Catching too general exception Exception (broad-exception-caught)
+example_with_pylint_issues.py:7:0: W0611: Unused import sys (unused-import)
+
+------------------------------------------------------------------
+Your code has been rated at 6.88/10 (previous run: 6.95/10, -0.08)
+```
+
+**Key Observations:**
+
+**Message Categories:**
+- **C (Convention)**: Coding standard violations (C0103: naming, C0115: missing docstring)
+- **R (Refactor)**: Code structure issues (R0913: too many arguments, R0914: too many locals)
+- **W (Warning)**: Potential problems (W0102: dangerous default, W0611: unused import)
+- **E (Error)**: Likely bugs (not shown in this example)
+- **F (Fatal)**: Prevents analysis (not shown in this example)
+
+**Quality Score:**
+- Score: 6.88/10 indicates significant room for improvement
+- Each issue reduces the score based on severity
+
+### Example 12: Achieving High Code Quality
+
+Run pylint on properly refactored code:
+
+```bash
+pylint example_pylint_clean.py
+```
+
+**Expected Output:**
+```
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 9.77/10, +0.23)
+```
+
+When pylint produces no messages and a 10/10 score, your code meets high quality standards!
+
+**What Was Fixed:**
+
+1. **Naming Conventions**
+   - Changed `myGlobalVar` → `MY_GLOBAL_VAR` (constants)
+   - Changed `CalculateTotal` → `calculate_total` (functions)
+
+2. **Function Complexity**
+   - Reduced arguments from 10 → 3 (R0913)
+   - Simplified logic to reduce local variables (R0914)
+   - Replaced long if-elif chains with dictionaries (R0912)
+   - Combined return statements (R0911)
+
+3. **Documentation**
+   - Added module docstring (C0114)
+   - Added class docstrings (C0115)
+   - Added function docstrings (C0116)
+
+4. **Best Practices**
+   - Changed mutable default `[]` → `None` (W0102)
+   - Used specific exception types instead of `Exception` (W0718)
+   - Removed unused imports (W0611)
+   - Used `is not None` instead of `!= None` (C0121)
+   - Used `enumerate()` instead of `range(len())` (C0200)
+   - Used context managers for file operations (R1732)
+
+### Example 13: Using pylint Configuration
+
+The `.pylintrc` file demonstrates common configuration options:
+
+```bash
+# pylint automatically reads .pylintrc in the current directory
+pylint example_with_pylint_issues.py
+
+# You can also specify a config file explicitly
+pylint --rcfile=.pylintrc example_with_pylint_issues.py
+```
+
+**Configuration Features:**
+- Message category control (enable/disable specific checks)
+- Code complexity thresholds (max arguments, branches, locals)
+- Naming conventions customization
+- Output format options (text, json, colorized)
+- Plugin loading for framework-specific checks
+
+### Example 14: Comparing flake8 vs pylint
+
+Run both tools on the same code to see the differences:
+
+```bash
+# flake8: fast, focused on style
+flake8 example_with_pylint_issues.py
+
+# pylint: comprehensive, includes design analysis
+pylint example_with_pylint_issues.py
+```
+
+**Key Differences:**
+
+| Aspect | flake8 | pylint |
+|--------|--------|--------|
+| **Speed** | Fast | Slower (more thorough) |
+| **Scope** | Style + simple errors | Style + design + complexity |
+| **Score** | No score | 0-10 quality score |
+| **Messages** | Fewer, focused | More comprehensive |
+| **Configuration** | Simple | Extensive options |
+| **Use Case** | Quick checks in IDE/CI | Periodic deep analysis |
+
+**Best Practice:** Use **both**!
+- Run flake8 frequently for fast feedback
+- Run pylint periodically for deep analysis
+
+### Example 15: Integrating pylint with pytest
+
+Create a test that enforces a minimum pylint score:
+
+```bash
+# Run pylint as part of your test suite
+pytest --pylint --pylint-rcfile=.pylintrc
+```
+
+You can also create a custom test (see manuscript for example code).
+
+---
+
 ## Combining All Quality Tools
 
-For comprehensive code quality assurance, use all three tools together:
+For comprehensive code quality assurance, use all tools together in the recommended order:
 
 ```bash
 # 1. Format code with black
 black *.py
 
-# 2. Verify linting with flake8
+# 2. Verify linting with flake8 (fast checks)
 flake8 *.py
 
-# 3. Run tests with coverage
+# 3. Deep analysis with pylint (thorough checks)
+pylint *.py --fail-under=8.0
+
+# 4. Run tests with coverage
 pytest --cov=calculator --cov-report=term-missing
 ```
 
 This workflow ensures:
 - **Consistent formatting** (black)
-- **Style compliance** (flake8)
+- **Style compliance** (flake8)  
+- **Design quality** (pylint)
 - **Functional correctness** (pytest)
 - **Test coverage** (pytest-cov)
+
+### Quick Quality Check
+
+Run all checks in one command:
+
+```bash
+black *.py && flake8 *.py && pylint *.py && pytest --cov=calculator
+```
+
+The `&&` operator ensures each step succeeds before continuing.
 
 ---
 
@@ -434,7 +594,12 @@ By working through these examples, you will:
 7. **Use flake8 for linting** - Run static analysis to improve code quality
 8. **Fix linting issues** - Systematically resolve style and quality problems
 9. **Configure linting tools** - Customize flake8 for your project's needs
-10. **Integrate quality checks** - Combine coverage and linting in your development workflow
+10. **Format code automatically** - Use black for consistent code formatting
+11. **Understand pylint messages** - Interpret Convention, Refactor, Warning, and Error categories
+12. **Improve code design** - Use pylint feedback to reduce complexity and improve structure
+13. **Achieve high quality scores** - Refactor code to reach 8.0+ or 10/10 pylint scores
+14. **Configure pylint** - Customize analysis for your project's needs
+15. **Integrate quality checks** - Combine coverage, linting, and static analysis in your development workflow
 
 ## Next Steps
 
@@ -464,9 +629,21 @@ Try these exercises to deepen your understanding:
 
 10. **Set up pre-commit hooks** - Configure flake8 to run automatically before commits
 
+### pylint Exercises
+
+11. **Analyze your own code** - Run pylint on a personal project and aim for 8.0+ score
+
+12. **Fix issues systematically** - Start with E/F messages, then W, then R, finally C
+
+13. **Experiment with configuration** - Modify `.pylintrc` to adjust complexity thresholds or disable specific messages
+
+14. **Compare before/after** - Measure the score improvement after refactoring `example_with_pylint_issues.py`
+
+15. **Create quality gates** - Write a test that fails if pylint score drops below threshold
+
 ### Combined Exercises
 
-11. **Write code with both high coverage and clean style** - Create a small module with tests achieving 100% coverage and zero flake8 violations
+16. **Write code with both high coverage and clean style** - Create a small module with tests achieving 100% coverage and zero flake8 violations
 
 12. **Create a quality checklist** - Develop a checklist combining coverage targets and linting standards for your projects
 
@@ -501,15 +678,44 @@ Ensure `.flake8` is in the current directory or specify it with `--config=.flake
 **False positives**
 Use `# noqa: <code>` to suppress specific warnings on individual lines when truly necessary.
 
+### pylint Issues
+
+**pylint not recognized**
+```bash
+pip install pylint
+```
+
+**Score seems too low**
+Focus on fixing E and F messages first, then W, then R and C. Each category has different impact on score.
+
+**Too many messages**
+Start with `--disable=C,R` to focus on warnings and errors, then gradually enable more checks.
+
+**Configuration not being read**
+Ensure `.pylintrc` is in the current directory or specify it with `--rcfile=.pylintrc`.
+
+**False positives**
+Use `# pylint: disable=message-name` to suppress specific checks on individual lines or blocks when justified.
+
+### Integration Issues
+
+**black and flake8 conflict**
+Ensure `.flake8` has `max-line-length=88` and `extend-ignore=E203,W503` for black compatibility.
+
+**Tools report different issues**
+This is normal! Each tool has a different focus. Use them together for comprehensive quality checks.
+
 ## Summary
 
 These examples demonstrate the power of combining multiple code analysis tools:
 
 - **Code Coverage (pytest-cov)**: Measures how much of your code is tested, identifying gaps in your test suite
 - **Linting (flake8)**: Checks code style and quality, enforcing PEP 8 standards and catching potential bugs
+- **Code Formatting (black)**: Automatically formats code for consistency, eliminating style debates
+- **Static Analysis (pylint)**: Performs deep code analysis, detecting design issues, complexity problems, and code smells
 
 Coverage metrics provide objective data about which parts of your code are tested, guiding you toward more comprehensive and reliable tests. However, remember that high coverage is a means to an end—the goal is confidence that your code works correctly, not just high percentages.
 
-Similarly, passing flake8 checks ensures your code is readable, maintainable, and follows Python best practices, making collaboration easier and reducing bugs.
+Passing flake8 checks ensures your code is readable and follows Python best practices. Black eliminates formatting debates by applying consistent style automatically. pylint goes deeper, analyzing code structure and complexity to identify design improvements.
 
-Together, these tools form a comprehensive quality assurance strategy that validates both **what your code does** (functionality via tests and coverage) and **how it's written** (quality via linting).
+Together, these tools form a comprehensive quality assurance strategy that validates both **what your code does** (functionality via tests and coverage) and **how it's written** (quality via linting, formatting, and static analysis).

@@ -14,7 +14,9 @@ myGlobalVar = 42
 
 
 # Function with too many arguments (R0913)
-def process_data(name, age, email, phone, address, city, state, zipcode, country, notes):
+def process_data(
+    name, age, email, phone, address, city, state, zipcode, country, notes
+):
     """Process user data with too many arguments."""
     return f"{name} from {city}, {state}"
 
@@ -26,8 +28,8 @@ def calculate_complex_result(x, y):
     var2 = x - y
     var3 = x * y
     var4 = x / y if y != 0 else 0
-    var5 = x ** 2
-    var6 = y ** 2
+    var5 = x**2
+    var6 = y**2
     var7 = var1 + var2
     var8 = var3 + var4
     var9 = var5 + var6
@@ -43,17 +45,17 @@ def calculate_complex_result(x, y):
 
 # Class without docstring (C0115)
 class DataProcessor:
-    
+
     # Method without docstring (C0116)
     def __init__(self, data):
         self.data = data
         self.result = None
-    
+
     # Method that could be a function (R0201)
     def helper_function(self, value):
         """Helper that doesn't use self."""
         return value * 2
-    
+
     # Method with unused argument (W0613)
     def process(self, mode="default", debug=False):
         """Process data."""
@@ -189,7 +191,7 @@ def process_items(items):
 # Consider using with statement for file operations (R1732)
 def read_file(filename):
     """Function not using context manager."""
-    f = open(filename, 'r')
+    f = open(filename, "r")
     content = f.read()
     f.close()
     return content
@@ -208,7 +210,7 @@ def inconsistent_returns(x):
 # Too few public methods (R0903)
 class SimpleContainer:
     """Class with too few public methods."""
-    
+
     def __init__(self, value):
         """Initialize container."""
         self.value = value

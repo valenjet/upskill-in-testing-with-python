@@ -105,11 +105,7 @@ def used_imports_example():
 
 
 # Proper indentation in dictionary
-config = {
-    'name': 'example',
-    'version': '1.0',
-    'debug': True
-}
+config = {"name": "example", "version": "1.0", "debug": True}
 
 
 # Use def instead of lambda for named functions

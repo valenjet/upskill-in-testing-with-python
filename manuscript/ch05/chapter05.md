@@ -1892,6 +1892,44 @@ Add pylint checks to your GitHub Actions workflow:
 
 The `--fail-under` flag causes pylint to exit with an error if the score is below the threshold.
 
+#### Example: Refactored Code with High Quality Score
+
+After systematically addressing pylint feedback, you can achieve excellent scores. The file `example_pylint_clean.py` demonstrates the same functionality as `example_with_pylint_issues.py` but refactored to address all warnings:
+
+```bash
+$ pylint example_pylint_clean.py
+
+-------------------------------------------------------------------
+Your code has been rated at 10.00/10
+```
+
+A perfect 10/10 score indicates the code meets high quality standards. The refactored version demonstrates:
+
+**Naming Improvements:**
+- `myGlobalVar` → `MY_GLOBAL_VAR` (proper constant naming)
+- `CalculateTotal` → `calculate_total` (snake_case for functions)
+
+**Design Simplifications:**
+- Reduced function arguments from 10 to 3 parameters
+- Replaced long if-elif chains with dictionary lookups
+- Combined multiple return statements into single conditional expressions
+- Broke complex functions into smaller, focused units
+
+**Documentation Added:**
+- Module-level docstring explaining purpose
+- Class and function docstrings with Args/Returns sections
+- Clear descriptions of behavior and intent
+
+**Best Practice Fixes:**
+- Changed mutable defaults `[]` to `None` with initialization
+- Used specific exception types instead of broad `Exception`
+- Removed unused imports
+- Applied `enumerate()` instead of `range(len())`
+- Used context managers (`with`) for file operations
+- Fixed None comparisons (`is not None` vs `!= None`)
+
+The transformation from 6.88/10 to 10.00/10 demonstrates how pylint guidance improves code maintainability, readability, and adherence to Python best practices.
+
 #### Best Practices for Using pylint
 
 1. **Start Gradually**: Don't expect a perfect 10/10 score immediately
