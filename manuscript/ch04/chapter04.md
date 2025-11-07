@@ -400,9 +400,191 @@ pytest can be utilized to implement acceptance tests effectively. pytest is a ve
 
 The following illustrates a basic acceptance test implementation using pytest, focusing on behavior specifications rather than test scripts. This approach emphasizes the conditions, outcomes, and desired behaviors in a language that is accessible to analysts, developers, and testers alike.
 
-##### Listing 4-?: Example of Acceptance Testing with pytest
+##### Listing 4-1: Example of Acceptance Testing with pytest
 
-[To Do]
+```python
+# test_user_registration.py
+import pytest
+
+# Acceptance Test: User Registration Feature
+# Given-When-Then format makes requirements clear to all stakeholders
+
+class TestUserRegistration:
+    """
+    Acceptance tests for user registration feature.
+    These tests verify the system meets business requirements.
+    """
+    
+    def test_successful_registration_with_valid_email_and_password(self):
+        """
+        Scenario: User registers with valid credentials
+        Given: A user with valid email and strong password
+        When: The user submits the registration form
+        Then: The account is created successfully
+        And: A welcome email is sent
+        """
+        # Given
+        user_email = "newuser@example.com"
+        user_password = "SecurePass123!"
+        registration_service = RegistrationService()
+        
+        # When
+        result = registration_service.register_user(
+            email=user_email,
+            password=user_password
+        )
+        
+        # Then
+        assert result.success is True
+        assert result.user_id is not None
+        assert result.email_sent is True
+        assert result.message == "Registration successful"
+    
+    def test_registration_fails_with_invalid_email_format(self):
+        """
+        Scenario: User attempts registration with invalid email
+        Given: A user with invalid email format
+        When: The user submits the registration form
+        Then: Registration is rejected
+        And: An appropriate error message is shown
+        """
+        # Given
+        invalid_email = "not-an-email"
+        user_password = "SecurePass123!"
+        registration_service = RegistrationService()
+        
+        # When
+        result = registration_service.register_user(
+            email=invalid_email,
+            password=user_password
+        )
+        
+        # Then
+        assert result.success is False
+        assert result.error_code == "INVALID_EMAIL"
+        assert "valid email" in result.message.lower()
+    
+    def test_registration_fails_with_weak_password(self):
+        """
+        Scenario: User attempts registration with weak password
+        Given: A user with valid email but weak password
+        When: The user submits the registration form
+        Then: Registration is rejected
+        And: Password requirements are explained
+        """
+        # Given
+        user_email = "newuser@example.com"
+        weak_password = "123"
+        registration_service = RegistrationService()
+        
+        # When
+        result = registration_service.register_user(
+            email=user_email,
+            password=weak_password
+        )
+        
+        # Then
+        assert result.success is False
+        assert result.error_code == "WEAK_PASSWORD"
+        assert "at least 8 characters" in result.message.lower()
+    
+    def test_registration_fails_when_email_already_exists(self):
+        """
+        Scenario: User attempts to register with existing email
+        Given: An email address already registered in the system
+        When: A user tries to register with that email
+        Then: Registration is rejected
+        And: User is informed email is taken
+        """
+        # Given
+        existing_email = "existing@example.com"
+        registration_service = RegistrationService()
+        # Pre-register the email
+        registration_service.register_user(existing_email, "FirstPass123!")
+        
+        # When
+        result = registration_service.register_user(
+            email=existing_email,
+            password="SecondPass456!"
+        )
+        
+        # Then
+        assert result.success is False
+        assert result.error_code == "EMAIL_EXISTS"
+        assert "already registered" in result.message.lower()
+
+
+# Example of the RegistrationService class (system under test)
+class RegistrationService:
+    """Service for handling user registration."""
+    
+    def __init__(self):
+        self.registered_emails = set()
+    
+    def register_user(self, email: str, password: str):
+        """Register a new user with email and password."""
+        # Validate email format
+        if "@" not in email or "." not in email:
+            return RegistrationResult(
+                success=False,
+                error_code="INVALID_EMAIL",
+                message="Please provide a valid email address"
+            )
+        
+        # Validate password strength
+        if len(password) < 8:
+            return RegistrationResult(
+                success=False,
+                error_code="WEAK_PASSWORD",
+                message="Password must be at least 8 characters"
+            )
+        
+        # Check if email already exists
+        if email in self.registered_emails:
+            return RegistrationResult(
+                success=False,
+                error_code="EMAIL_EXISTS",
+                message="Email already registered"
+            )
+        
+        # Register the user
+        self.registered_emails.add(email)
+        user_id = len(self.registered_emails)
+        
+        return RegistrationResult(
+            success=True,
+            user_id=user_id,
+            email_sent=True,
+            message="Registration successful"
+        )
+
+
+class RegistrationResult:
+    """Result object for registration operations."""
+    
+    def __init__(self, success: bool, user_id: int = None, 
+                 email_sent: bool = False, error_code: str = None,
+                 message: str = ""):
+        self.success = success
+        self.user_id = user_id
+        self.email_sent = email_sent
+        self.error_code = error_code
+        self.message = message
+```
+
+This example demonstrates several key principles of acceptance testing:
+
+1. **Clear Scenario Documentation**: Each test method includes a docstring that describes the scenario in Given-When-Then format, making the business requirements explicit.
+
+2. **Readable Test Names**: Test method names clearly state what is being tested, making it easy for non-technical stakeholders to understand test coverage.
+
+3. **Business-Focused Assertions**: Tests verify business outcomes (registration success, appropriate error messages) rather than implementation details.
+
+4. **Comprehensive Coverage**: Tests cover both happy path (successful registration) and various failure scenarios (invalid email, weak password, duplicate email).
+
+5. **Self-Contained Examples**: The code includes both the tests and a simple implementation, making it easy to understand the complete picture.
+
+For more sophisticated behavior-driven development with pytest, consider using the `pytest-bdd` plugin, which allows writing scenarios in Gherkin syntax (Given/When/Then) in separate `.feature` files, further improving collaboration between technical and non-technical team members.
 
 #### Advantages of Automated Acceptance Testing
 
@@ -474,6 +656,786 @@ def test_depreciation_calculation(scenario):
 - **Collaborative Development**: Supports a collaborative approach to testing, with analysts and testers contributing to a comprehensive set of test cases.
 
 A purpose-built acceptance testing framework, leveraging the capabilities of pytest and additional libraries for data management, provides an effective tool for ensuring the correctness and completeness of business-logic modules. This method underscores the importance of automated acceptance testing in the development process, offering a systematic approach to validating software against business requirements.
+
+
+## pytest Markers in Practice
+
+> Use Markers to Categorize and Selectively Run Tests
+
+Markers are one of pytest's most powerful features for organizing and controlling test execution. They allow you to attach metadata to test functions, enabling you to categorize tests and selectively run subsets of your test suite based on various criteria. This capability becomes increasingly valuable as test suites grow larger and more complex.
+
+### Understanding pytest Markers
+
+A marker is essentially a label or tag applied to a test function using the `@pytest.mark` decorator. Markers serve multiple purposes:
+
+- **Test Categorization**: Group tests by type (unit, integration, slow, fast)
+- **Conditional Execution**: Skip or expect failure for tests under certain conditions
+- **Selective Running**: Execute only specific subsets of tests
+- **Test Documentation**: Provide metadata about test characteristics
+
+pytest includes several built-in markers with predefined behaviors, and also allows you to create custom markers for your specific needs.
+
+### Built-in Markers
+
+pytest provides several built-in markers that handle common testing scenarios. The most frequently used are `skip`, `skipif`, and `xfail`.
+
+#### The @pytest.mark.skip Marker
+
+The `skip` marker unconditionally skips a test. This is useful when you have tests that are temporarily broken, not yet implemented, or need to be disabled for a specific reason.
+
+```python
+import pytest
+
+@pytest.mark.skip(reason="Feature not yet implemented")
+def test_future_feature():
+    """This test will be skipped until the feature is ready."""
+    assert new_feature() == expected_result
+```
+
+When pytest runs this test, it will be marked as skipped (shown as 's' in the output) and the reason will be displayed if you run with `-v` (verbose) or `-rs` (show skip reasons).
+
+#### The @pytest.mark.skipif Marker
+
+The `skipif` marker conditionally skips tests based on a boolean expression. This is particularly useful for tests that should only run on specific platforms, Python versions, or when certain dependencies are available.
+
+```python
+import sys
+import pytest
+
+@pytest.mark.skipif(sys.version_info < (3, 10), 
+                   reason="Requires Python 3.10 or higher")
+def test_feature_requiring_python_310():
+    """Uses match statement introduced in Python 3.10."""
+    match value:
+        case 1:
+            result = "one"
+        case _:
+            result = "other"
+    assert result == expected
+
+@pytest.mark.skipif(sys.platform == "win32",
+                   reason="Test not applicable on Windows")
+def test_unix_specific_feature():
+    """This test only runs on Unix-like systems."""
+    assert os.system("ls -la") == 0
+```
+
+#### The @pytest.mark.xfail Marker
+
+The `xfail` marker indicates that a test is expected to fail. This is valuable when you know about a bug or limitation but want to document it with a test rather than removing the test entirely. When marked with `xfail`, a test failure doesn't cause the test run to be marked as failed.
+
+```python
+import pytest
+
+@pytest.mark.xfail(reason="Known issue: Bug #1234")
+def test_known_bug():
+    """Documents a known bug that hasn't been fixed yet."""
+    result = buggy_function()
+    assert result == expected_value
+
+@pytest.mark.xfail(sys.platform == "darwin", 
+                   reason="Fails on macOS due to system limitation")
+def test_platform_issue():
+    """Expected to fail on macOS."""
+    assert platform_specific_operation() == expected
+```
+
+When an `xfail` test fails, it's marked as 'x' (expected to fail). If it unexpectedly passes, it's marked as 'X' (unexpectedly passing), which alerts you that the known issue might be resolved.
+
+#### The @pytest.mark.parametrize Marker
+
+We've already seen the `parametrize` marker in earlier examples. It's a built-in marker that enables running the same test with different input values:
+
+```python
+@pytest.mark.parametrize("test_input,expected", [
+    ("3+5", 8),
+    ("2+4", 6),
+    ("6*9", 54),
+])
+def test_eval(test_input, expected):
+    assert eval(test_input) == expected
+```
+
+### Custom Markers
+
+Beyond the built-in markers, pytest allows you to create custom markers to categorize tests according to your project's needs. Custom markers are particularly useful for organizing large test suites.
+
+#### Creating and Using Custom Markers
+
+Custom markers are created simply by using them. However, it's a best practice to register them in your pytest configuration to avoid warnings and provide documentation.
+
+```python
+import pytest
+
+@pytest.mark.slow
+def test_complex_calculation():
+    """This test takes several seconds to complete."""
+    result = perform_expensive_computation()
+    assert result == expected_value
+
+@pytest.mark.integration
+def test_database_integration():
+    """Integration test that requires database connection."""
+    db = connect_to_database()
+    result = db.query("SELECT * FROM users")
+    assert len(result) > 0
+
+@pytest.mark.slow
+@pytest.mark.integration
+def test_slow_integration():
+    """Can apply multiple markers to a single test."""
+    result = time_consuming_database_operation()
+    assert result.success is True
+```
+
+#### Registering Custom Markers
+
+To register custom markers and avoid pytest warnings, add them to your `pytest.ini` or `pyproject.toml` configuration file:
+
+**pytest.ini:**
+```ini
+[pytest]
+markers =
+    slow: marks tests as slow (deselect with '-m "not slow"')
+    integration: marks tests as integration tests
+    unit: marks tests as unit tests
+    smoke: marks tests as smoke tests for quick validation
+    api: marks tests that interact with external APIs
+```
+
+**pyproject.toml:**
+```toml
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "smoke: marks tests as smoke tests for quick validation",
+    "api: marks tests that interact with external APIs",
+]
+```
+
+### Running Tests by Marker
+
+One of the most powerful features of markers is the ability to selectively run tests based on their markers using the `-m` command-line option.
+
+#### Basic Marker Selection
+
+Run all tests marked as `slow`:
+```bash
+pytest -m slow
+```
+
+Run all tests except those marked as `slow`:
+```bash
+pytest -m "not slow"
+```
+
+#### Boolean Expressions with Markers
+
+pytest supports boolean expressions for more sophisticated test selection:
+
+Run tests marked as `integration` OR `api`:
+```bash
+pytest -m "integration or api"
+```
+
+Run tests marked as `integration` AND `slow`:
+```bash
+pytest -m "integration and slow"
+```
+
+Run integration tests that are NOT slow:
+```bash
+pytest -m "integration and not slow"
+```
+
+Run quick smoke tests:
+```bash
+pytest -m smoke
+```
+
+#### Practical Marker Usage Strategies
+
+**Development Workflow:**
+- Run only fast unit tests during development for quick feedback
+- Run full suite including slow tests before committing
+- Run integration tests only when needed
+
+```bash
+# During development - fast feedback loop
+pytest -m "unit and not slow"
+
+# Before committing - comprehensive check
+pytest
+
+# Integration testing
+pytest -m integration
+```
+
+**Continuous Integration (CI) Strategy:**
+- Run smoke tests first for quick validation
+- Run unit tests in parallel
+- Run integration tests separately
+- Run slow tests on a schedule rather than every commit
+
+```bash
+# CI pipeline stage 1: Smoke tests
+pytest -m smoke
+
+# CI pipeline stage 2: Fast unit tests
+pytest -m "unit and not slow" -n auto
+
+# CI pipeline stage 3: Integration tests
+pytest -m integration
+
+# Nightly build: All tests
+pytest
+```
+
+### Combining Markers with Other pytest Features
+
+Markers work seamlessly with other pytest features, creating powerful testing workflows.
+
+#### Markers with Fixtures
+
+```python
+import pytest
+
+@pytest.fixture
+def slow_resource():
+    """Fixture that takes time to set up."""
+    resource = expensive_initialization()
+    yield resource
+    expensive_cleanup(resource)
+
+@pytest.mark.slow
+def test_with_slow_fixture(slow_resource):
+    """Test marked as slow because it uses a slow fixture."""
+    assert slow_resource.ready is True
+```
+
+#### Markers at Class Level
+
+Apply a marker to all tests in a class:
+
+```python
+@pytest.mark.integration
+class TestDatabaseOperations:
+    """All tests in this class are integration tests."""
+    
+    def test_insert(self):
+        assert db.insert(record) is True
+    
+    def test_update(self):
+        assert db.update(record) is True
+    
+    def test_delete(self):
+        assert db.delete(record.id) is True
+```
+
+#### Conditional Markers
+
+Apply markers conditionally based on runtime conditions:
+
+```python
+@pytest.mark.skipif(not has_database_connection(),
+                   reason="Database not available")
+@pytest.mark.integration
+def test_database_query():
+    """Skip if database is not available."""
+    result = db.query("SELECT 1")
+    assert result == [(1,)]
+```
+
+### Best Practices for Using Markers
+
+1. **Register All Custom Markers**: Always register custom markers in your configuration to avoid warnings and provide documentation.
+
+2. **Use Descriptive Names**: Choose marker names that clearly indicate their purpose (e.g., `slow`, `integration`, `requires_network`).
+
+3. **Document Marker Meanings**: Include descriptions in your configuration file explaining what each marker means and when it should be used.
+
+4. **Be Consistent**: Establish team conventions for marker usage and apply them consistently across your test suite.
+
+5. **Don't Over-Categorize**: Start with a few essential markers and add more only when needed. Too many markers can become confusing.
+
+6. **Combine with CI/CD**: Integrate marker-based test selection into your CI/CD pipeline for efficient testing workflows.
+
+7. **Review Regularly**: Periodically review your markers and test categorization to ensure they still align with your testing strategy.
+
+### Listing Markers
+
+To see all available markers in your project:
+
+```bash
+pytest --markers
+```
+
+This displays all registered markers with their descriptions, helping team members understand how to use them.
+
+Markers are an essential tool for managing test execution in pytest. By categorizing tests and enabling selective execution, markers help you maintain a fast development feedback loop while ensuring comprehensive testing when needed. Whether you're working on a small project or a large test suite, effective use of markers will improve your testing workflow and productivity.
+
+
+## Organizing Tests with conftest.py
+
+> Use conftest.py to Share Fixtures and Configuration Across Test Modules
+
+As test suites grow larger and more complex, you'll often find yourself needing to share fixtures, hooks, and configuration across multiple test files. pytest provides a special file called `conftest.py` specifically for this purpose. Understanding how to effectively use `conftest.py` is essential for maintaining a well-organized and maintainable test suite.
+
+### What is conftest.py?
+
+`conftest.py` is a special Python file that pytest recognizes and loads automatically. Unlike regular test files, `conftest.py` serves as a central location for:
+
+- **Shared Fixtures**: Fixtures that multiple test files need to access
+- **Hooks**: pytest hook functions to customize test behavior
+- **Plugins**: Local plugins to extend pytest functionality
+- **Test Configuration**: Project-specific test setup and configuration
+
+The name `conftest.py` is reserved by pytest and must be used exactly as written. These files don't need to be imported—pytest discovers and loads them automatically based on their location in your project directory structure.
+
+### How conftest.py Works
+
+pytest follows a specific discovery pattern for `conftest.py` files:
+
+1. **Test Execution Starts**: When pytest runs, it searches for `conftest.py` files
+2. **Hierarchical Loading**: Files are loaded from the root directory down to the test file's directory
+3. **Automatic Discovery**: All fixtures defined in discovered `conftest.py` files become available to tests
+4. **Scope-Based Access**: Tests can access fixtures from their directory's `conftest.py` and any parent directories
+
+This hierarchical approach allows you to organize fixtures at different levels of your test suite:
+
+```
+project/
+├── conftest.py              # Root-level: available to all tests
+├── tests/
+│   ├── conftest.py         # Test-level: available to all in tests/
+│   ├── test_module1.py
+│   ├── test_module2.py
+│   └── integration/
+│       ├── conftest.py     # Integration-level: only for integration tests
+│       ├── test_api.py
+│       └── test_database.py
+```
+
+### Creating Fixtures in conftest.py
+
+The primary use of `conftest.py` is to define fixtures that multiple test modules need to share. Instead of duplicating fixture code across test files, you define it once in `conftest.py`.
+
+#### Basic Example
+
+**conftest.py:**
+```python
+import pytest
+
+@pytest.fixture
+def sample_data():
+    """Provides sample data for testing."""
+    return {
+        'users': [
+            {'id': 1, 'name': 'Alice', 'email': 'alice@example.com'},
+            {'id': 2, 'name': 'Bob', 'email': 'bob@example.com'},
+        ],
+        'products': [
+            {'id': 101, 'name': 'Laptop', 'price': 999.99},
+            {'id': 102, 'name': 'Mouse', 'price': 29.99},
+        ]
+    }
+
+@pytest.fixture
+def test_config():
+    """Provides test configuration."""
+    return {
+        'debug': True,
+        'timeout': 30,
+        'retry_count': 3
+    }
+```
+
+**test_users.py:**
+```python
+def test_user_count(sample_data):
+    """Test uses fixture from conftest.py without importing."""
+    assert len(sample_data['users']) == 2
+
+def test_user_emails(sample_data):
+    """Another test using the same fixture."""
+    emails = [user['email'] for user in sample_data['users']]
+    assert 'alice@example.com' in emails
+```
+
+**test_products.py:**
+```python
+def test_product_count(sample_data):
+    """Different test file, same fixture."""
+    assert len(sample_data['products']) == 2
+
+def test_product_prices(sample_data):
+    """Fixtures are discovered automatically."""
+    total = sum(p['price'] for p in sample_data['products'])
+    assert total > 1000
+```
+
+Notice that tests use the fixtures without any import statements. pytest automatically makes fixtures from `conftest.py` available to all test files in that directory and subdirectories.
+
+### Fixture Scopes in conftest.py
+
+Fixtures in `conftest.py` can use any scope, allowing you to control how often setup and teardown occur:
+
+```python
+import pytest
+
+@pytest.fixture(scope="function")
+def fresh_database():
+    """Creates a new database for each test function."""
+    db = Database()
+    db.initialize()
+    yield db
+    db.cleanup()
+
+@pytest.fixture(scope="class")
+def shared_database():
+    """Shares database across all tests in a class."""
+    db = Database()
+    db.initialize()
+    yield db
+    db.cleanup()
+
+@pytest.fixture(scope="module")
+def module_database():
+    """Creates one database per test module."""
+    db = Database()
+    db.initialize()
+    yield db
+    db.cleanup()
+
+@pytest.fixture(scope="session")
+def session_database():
+    """Creates one database for the entire test session."""
+    db = Database()
+    db.initialize()
+    yield db
+    db.cleanup()
+```
+
+Session-scoped fixtures are particularly valuable for expensive setup operations like establishing database connections, starting external services, or loading large datasets.
+
+### Fixture Dependencies
+
+Fixtures in `conftest.py` can depend on other fixtures, creating a dependency chain:
+
+```python
+import pytest
+
+@pytest.fixture(scope="session")
+def database_connection():
+    """Establishes database connection (session-scoped)."""
+    conn = connect_to_database()
+    yield conn
+    conn.close()
+
+@pytest.fixture
+def database_transaction(database_connection):
+    """Creates a transaction (function-scoped, depends on connection)."""
+    transaction = database_connection.begin_transaction()
+    yield transaction
+    transaction.rollback()  # Rollback after each test
+
+@pytest.fixture
+def user_repository(database_transaction):
+    """Provides user repository (depends on transaction)."""
+    return UserRepository(database_transaction)
+```
+
+Tests using `user_repository` automatically get all the upstream fixtures:
+
+```python
+def test_create_user(user_repository):
+    """Test uses user_repository, which triggers the entire fixture chain."""
+    user = user_repository.create(name="Alice", email="alice@example.com")
+    assert user.id is not None
+    assert user.name == "Alice"
+```
+
+### Organizing Multiple conftest.py Files
+
+For larger projects, you can use multiple `conftest.py` files at different levels:
+
+```python
+# tests/conftest.py (root level)
+import pytest
+
+@pytest.fixture(scope="session")
+def app_config():
+    """Application configuration available to all tests."""
+    return {
+        'environment': 'test',
+        'debug': True
+    }
+
+# tests/unit/conftest.py
+import pytest
+
+@pytest.fixture
+def mock_database():
+    """Mock database for unit tests only."""
+    return MockDatabase()
+
+# tests/integration/conftest.py
+import pytest
+
+@pytest.fixture(scope="module")
+def real_database(app_config):
+    """Real database for integration tests only."""
+    db = Database(app_config['environment'])
+    db.connect()
+    yield db
+    db.disconnect()
+```
+
+Tests can access fixtures from their own directory and all parent directories:
+- Unit tests can use `app_config` and `mock_database`
+- Integration tests can use `app_config` and `real_database`
+- Both benefit from the session-scoped `app_config`
+
+### Advanced Patterns
+
+#### Autouse Fixtures
+
+Fixtures with `autouse=True` run automatically for all tests in scope without being explicitly requested:
+
+```python
+import pytest
+import logging
+
+@pytest.fixture(autouse=True)
+def setup_logging():
+    """Automatically configure logging for all tests."""
+    logging.basicConfig(level=logging.DEBUG)
+    yield
+    logging.shutdown()
+
+@pytest.fixture(autouse=True, scope="function")
+def reset_state():
+    """Automatically reset global state before each test."""
+    global_state.reset()
+    yield
+    global_state.cleanup()
+```
+
+#### Fixture Factories
+
+Sometimes you need to create multiple instances of something. Fixture factories return a function that creates instances:
+
+```python
+import pytest
+
+@pytest.fixture
+def user_factory():
+    """Factory for creating test users."""
+    created_users = []
+    
+    def _create_user(name, email, role='user'):
+        user = User(name=name, email=email, role=role)
+        created_users.append(user)
+        return user
+    
+    yield _create_user
+    
+    # Cleanup all created users
+    for user in created_users:
+        user.delete()
+
+# Usage in tests:
+def test_multiple_users(user_factory):
+    admin = user_factory('Admin', 'admin@example.com', role='admin')
+    user1 = user_factory('User1', 'user1@example.com')
+    user2 = user_factory('User2', 'user2@example.com')
+    
+    assert admin.role == 'admin'
+    assert user1.role == 'user'
+```
+
+#### Parametrized Fixtures
+
+You can parametrize fixtures in `conftest.py` to run tests with multiple configurations:
+
+```python
+import pytest
+
+@pytest.fixture(params=['sqlite', 'postgresql', 'mysql'])
+def database(request):
+    """Parametrized fixture - tests run once for each database."""
+    db_type = request.param
+    db = create_database(db_type)
+    db.connect()
+    yield db
+    db.disconnect()
+
+# This test runs three times, once for each database type:
+def test_database_query(database):
+    result = database.query("SELECT 1")
+    assert result is not None
+```
+
+### Best Practices for conftest.py
+
+1. **Keep It Focused**: Only include fixtures and hooks that truly need to be shared. Module-specific fixtures should stay in test modules.
+
+2. **Use Descriptive Names**: Fixture names should clearly indicate their purpose (`database_connection`, not `db`).
+
+3. **Document Fixtures**: Add docstrings explaining what each fixture provides and any important setup/teardown behavior.
+
+4. **Organize by Scope**: Group fixtures by scope (session, module, function) to make dependencies clear.
+
+5. **Avoid Circular Dependencies**: Be careful not to create circular fixture dependencies, which pytest will reject.
+
+6. **Consider Multiple Files**: For large projects, use multiple `conftest.py` files to organize fixtures by feature or test type.
+
+7. **Use Fixture Factories for Flexibility**: When tests need multiple instances or variations, provide factories rather than fixed fixtures.
+
+8. **Leverage Autouse Sparingly**: Only use `autouse=True` for truly universal setup like logging configuration or state cleanup.
+
+9. **Test Your Fixtures**: If fixtures contain complex logic, consider writing tests for them.
+
+10. **Mind the Scope**: Choose the broadest scope that's safe for the fixture's behavior to minimize setup overhead.
+
+### Example: Comprehensive conftest.py
+
+Here's a well-organized `conftest.py` showing multiple patterns:
+
+```python
+"""
+Shared test fixtures for the test suite.
+
+This conftest.py provides common fixtures used across multiple test modules.
+Fixtures are organized by scope and functionality.
+"""
+import pytest
+import tempfile
+from pathlib import Path
+
+# ============================================================================
+# Session-Scoped Fixtures (expensive, shared across all tests)
+# ============================================================================
+
+@pytest.fixture(scope="session")
+def test_config():
+    """Application configuration for testing."""
+    return {
+        'environment': 'test',
+        'debug': True,
+        'database_url': 'sqlite:///:memory:',
+        'cache_enabled': False
+    }
+
+@pytest.fixture(scope="session")
+def app(test_config):
+    """Application instance for the test session."""
+    from myapp import create_app
+    app = create_app(test_config)
+    return app
+
+# ============================================================================
+# Module-Scoped Fixtures (shared within a test module)
+# ============================================================================
+
+@pytest.fixture(scope="module")
+def database_connection(test_config):
+    """Database connection for a test module."""
+    import sqlite3
+    conn = sqlite3.connect(':memory:')
+    
+    # Create tables
+    conn.execute('''CREATE TABLE users 
+                    (id INTEGER PRIMARY KEY, name TEXT, email TEXT)''')
+    conn.commit()
+    
+    yield conn
+    
+    conn.close()
+
+# ============================================================================
+# Function-Scoped Fixtures (fresh for each test)
+# ============================================================================
+
+@pytest.fixture
+def database_transaction(database_connection):
+    """Clean database transaction for each test."""
+    database_connection.execute('BEGIN')
+    yield database_connection
+    database_connection.rollback()
+
+@pytest.fixture
+def temp_directory():
+    """Temporary directory for test file operations."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        yield Path(tmpdir)
+
+@pytest.fixture
+def sample_users():
+    """Sample user data for testing."""
+    return [
+        {'id': 1, 'name': 'Alice', 'email': 'alice@example.com'},
+        {'id': 2, 'name': 'Bob', 'email': 'bob@example.com'},
+        {'id': 3, 'name': 'Charlie', 'email': 'charlie@example.com'},
+    ]
+
+# ============================================================================
+# Fixture Factories
+# ============================================================================
+
+@pytest.fixture
+def user_factory(database_transaction):
+    """Factory for creating test users in the database."""
+    created_ids = []
+    
+    def _create_user(name, email):
+        cursor = database_transaction.execute(
+            'INSERT INTO users (name, email) VALUES (?, ?)',
+            (name, email)
+        )
+        user_id = cursor.lastrowid
+        created_ids.append(user_id)
+        return user_id
+    
+    yield _create_user
+    
+    # Cleanup handled by transaction rollback
+
+# ============================================================================
+# Autouse Fixtures (run automatically)
+# ============================================================================
+
+@pytest.fixture(autouse=True)
+def reset_global_state():
+    """Reset any global state before each test."""
+    # Setup
+    yield
+    # Teardown
+    pass  # Add cleanup code here if needed
+```
+
+### When Not to Use conftest.py
+
+While `conftest.py` is powerful, don't overuse it:
+
+- **Module-Specific Fixtures**: If only one test module needs a fixture, keep it in that module
+- **Simple Fixtures**: Very simple fixtures can stay in test modules for better locality
+- **Overly Generic**: Avoid creating overly generic fixtures that hide what tests actually need
+- **Too Many Fixtures**: If `conftest.py` becomes hundreds of lines, consider splitting it
+
+### Debugging conftest.py
+
+If fixtures aren't being discovered:
+
+1. **Check the Name**: Must be exactly `conftest.py`, not `conftest.pyc` or `Conftest.py`
+2. **Check Location**: Ensure it's in the correct directory relative to your tests
+3. **No `__init__.py` Issues**: While not required, ensure your directory structure is correct
+4. **Use `--fixtures`**: Run `pytest --fixtures` to see all available fixtures
+5. **Verify Imports**: Ensure `conftest.py` doesn't have import errors
+
+The `conftest.py` mechanism is one of pytest's most powerful features for organizing test code. By centralizing shared fixtures and configuration, you create a more maintainable test suite that scales effectively as your project grows. Understanding fixture scopes, dependencies, and organization patterns will help you build a robust and efficient testing infrastructure.
 
 
 ## Conclusion
