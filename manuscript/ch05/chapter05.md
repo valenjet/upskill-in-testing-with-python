@@ -1483,6 +1483,470 @@ Key benefits:
 When combined with pytest-cov (coverage), flake8 (linting), and mypy (type checking), black completes a comprehensive code quality toolkit. Together, these tools ensure your code is not only functional and tested but also consistently formatted and maintainable.
 
 
+### Advanced Static Analysis with pylint
+
+While flake8 focuses on style consistency and simple error detection, pylint offers a more comprehensive static analysis experience. pylint examines your code for a wider range of issues including code smells, design problems, and potential bugs. It provides detailed feedback through a scoring system and categorizes issues by severity, making it an excellent tool for maintaining high code quality standards.
+
+#### What pylint Offers Beyond flake8
+
+pylint provides deeper analysis than flake8:
+
+- **Code Quality Metrics**: Assigns a quality score (0-10) to your code
+- **Broader Issue Detection**: Finds design problems, code smells, and complex issues
+- **Refactoring Suggestions**: Identifies opportunities to improve code structure
+- **Detailed Categories**: Organizes messages by type (Convention, Refactor, Warning, Error)
+- **Customizable Standards**: Extensive configuration options to match team preferences
+- **Plugin Architecture**: Extensible with custom checkers
+
+#### Understanding pylint Message Categories
+
+pylint categorizes issues into five types:
+
+- **C (Convention)**: Coding standard violations (naming, docstrings, formatting)
+- **R (Refactor)**: Code that could be improved or simplified (complexity, design)
+- **W (Warning)**: Potential problems that might cause bugs (unused variables, dangerous defaults)
+- **E (Error)**: Likely bugs or errors in the code (undefined variables, import errors)
+- **F (Fatal)**: Errors that prevent pylint from continuing analysis
+
+Each message has a unique identifier (e.g., C0103, R0913, W0612, E1101) that you can use for configuration.
+
+#### Installing and Running pylint
+
+Install pylint using pip:
+
+```bash
+$ pip install pylint
+```
+
+Run pylint on a file or directory:
+
+```bash
+$ pylint mymodule.py
+
+$ pylint mypackage/
+
+$ pylint .
+```
+
+#### Example: Running pylint on Problem Code
+
+Let's examine `example_with_pylint_issues.py`, which contains various issues pylint will detect:
+
+```bash
+$ cd code/ch05
+$ pylint example_with_pylint_issues.py
+```
+
+pylint will produce extensive output. Here's a sample of what you might see:
+
+```
+************* Module example_with_pylint_issues
+example_with_pylint_issues.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+example_with_pylint_issues.py:14:0: C0103: Constant name "myGlobalVar" doesn't conform to UPPER_CASE naming style (invalid-name)
+example_with_pylint_issues.py:18:0: R0913: Too many arguments (10/5) (too-many-arguments)
+example_with_pylint_issues.py:25:0: R0914: Too many local variables (16/15) (too-many-locals)
+example_with_pylint_issues.py:50:0: C0115: Missing class docstring (missing-class-docstring)
+example_with_pylint_issues.py:53:4: C0116: Missing function or method docstring (missing-function-docstring)
+example_with_pylint_issues.py:58:4: R0201: Method could be a function (no-self-use)
+example_with_pylint_issues.py:63:4: W0613: Unused argument 'debug' (unused-argument)
+example_with_pylint_issues.py:71:0: R0912: Too many branches (13/12) (too-many-branches)
+example_with_pylint_issues.py:95:0: R0911: Too many return statements (8/6) (too-many-returns)
+example_with_pylint_issues.py:8:0: W0611: Unused import time (unused-import)
+example_with_pylint_issues.py:116:0: C0103: Function name "CalculateTotal" doesn't conform to snake_case naming style (invalid-name)
+example_with_pylint_issues.py:125:0: C0116: Missing function or method docstring (missing-function-docstring)
+example_with_pylint_issues.py:125:0: C0103: Function name "add" doesn't conform to snake_case naming style (invalid-name)
+example_with_pylint_issues.py:130:0: W0102: Dangerous default value [] as argument (dangerous-default-value)
+example_with_pylint_issues.py:139:0: W0703: Catching too general exception Exception (broad-except)
+
+------------------------------------------------------------------
+Your code has been rated at 4.12/10 (previous run: 4.12/10, +0.00)
+```
+
+The output shows:
+- **Location**: File, line number, and column
+- **Message ID**: Code like C0103, R0913, W0613
+- **Message**: Description of the issue
+- **Symbol**: Short name in parentheses
+- **Score**: Overall code quality rating (out of 10)
+
+#### Common pylint Messages and How to Address Them
+
+##### C0103: invalid-name
+
+Variables, functions, and classes should follow Python naming conventions:
+
+```python
+# Bad
+myGlobalVar = 42
+def CalculateTotal(items):
+    pass
+
+# Good
+MY_GLOBAL_VAR = 42
+def calculate_total(items):
+    pass
+```
+
+##### C0114, C0115, C0116: Missing Docstrings
+
+All modules, classes, and functions should have docstrings:
+
+```python
+# Bad
+def add(a, b):
+    return a + b
+
+# Good
+def add(a, b):
+    """Add two numbers and return the result."""
+    return a + b
+```
+
+##### R0913: too-many-arguments
+
+Functions should have a reasonable number of parameters (default max: 5):
+
+```python
+# Bad
+def process_data(name, age, email, phone, address, city, state, zip):
+    pass
+
+# Good - use a dataclass or dictionary
+from dataclasses import dataclass
+
+@dataclass
+class UserData:
+    name: str
+    age: int
+    email: str
+    phone: str
+    address: str
+    city: str
+    state: str
+    zip_code: str
+
+def process_data(user: UserData):
+    pass
+```
+
+##### R0914: too-many-locals
+
+Functions with too many local variables are hard to understand:
+
+```python
+# Bad - 16 local variables
+def calculate_complex_result(x, y):
+    var1 = x + y
+    var2 = x - y
+    # ... 14 more variables
+    return var16
+
+# Good - break into smaller functions
+def calculate_sum_diff(x, y):
+    return x + y, x - y
+
+def calculate_products(x, y):
+    return x * y, x / y if y != 0 else 0
+```
+
+##### R0912: too-many-branches
+
+Functions with excessive conditionals should be refactored:
+
+```python
+# Bad - 13 branches
+def complex_conditional(status_code):
+    if status_code == 200:
+        return "OK"
+    elif status_code == 201:
+        return "Created"
+    # ... 11 more branches
+
+# Good - use a dictionary
+HTTP_STATUS_MESSAGES = {
+    200: "OK",
+    201: "Created",
+    204: "No Content",
+    # ... more mappings
+}
+
+def get_status_message(status_code):
+    """Get HTTP status message for a status code."""
+    return HTTP_STATUS_MESSAGES.get(status_code, "Unknown")
+```
+
+##### W0102: dangerous-default-value
+
+Mutable default arguments can cause unexpected behavior:
+
+```python
+# Bad
+def append_to_list(item, target_list=[]):
+    target_list.append(item)
+    return target_list
+
+# Good
+def append_to_list(item, target_list=None):
+    if target_list is None:
+        target_list = []
+    target_list.append(item)
+    return target_list
+```
+
+##### W0611: unused-import
+
+Remove imports that aren't used:
+
+```python
+# Bad
+import time  # Never used in the code
+
+# Good - only import what you need
+import sys
+import os
+```
+
+##### W0703: broad-except
+
+Catch specific exceptions instead of broad Exception:
+
+```python
+# Bad
+try:
+    result = risky_operation()
+except Exception:
+    return None
+
+# Good
+try:
+    result = risky_operation()
+except (ValueError, KeyError) as e:
+    logger.error(f"Operation failed: {e}")
+    return None
+```
+
+#### Configuring pylint
+
+Create a `.pylintrc` file to customize pylint's behavior:
+
+```bash
+$ pylint --generate-rcfile > .pylintrc
+```
+
+This generates a comprehensive configuration file. Here are key sections to customize:
+
+##### Listing 5-11: `.pylintrc` - Essential Configuration
+
+```ini
+[MASTER]
+# Use multiple processes to speed up Pylint
+jobs=1
+
+[MESSAGES CONTROL]
+# Disable specific messages
+disable=
+    C0111,  # missing-docstring
+    R0903,  # too-few-public-methods
+
+[FORMAT]
+# Maximum line length (88 matches black)
+max-line-length=88
+
+[DESIGN]
+# Maximum number of arguments
+max-args=5
+
+# Maximum number of branches
+max-branches=12
+
+# Maximum number of local variables
+max-locals=15
+```
+
+Common configuration options:
+
+- **max-line-length**: Set to 88 to match black's default
+- **max-args**: Adjust maximum function arguments (default: 5)
+- **max-locals**: Maximum local variables in a function (default: 15)
+- **max-branches**: Maximum branches in a function (default: 12)
+- **disable**: List of message IDs to disable
+
+#### Disabling Specific pylint Checks
+
+Disable checks at different scopes:
+
+**Disable globally** in `.pylintrc`:
+
+```ini
+[MESSAGES CONTROL]
+disable=C0103,R0903
+```
+
+**Disable for entire file** at the top:
+
+```python
+# pylint: disable=invalid-name,missing-docstring
+```
+
+**Disable for specific line**:
+
+```python
+myVariable = 42  # pylint: disable=invalid-name
+```
+
+**Disable for code block**:
+
+```python
+# pylint: disable=too-many-locals
+def complex_function():
+    # ... lots of local variables
+    pass
+# pylint: enable=too-many-locals
+```
+
+Use disabling judiciously—understanding and fixing issues is usually better than suppressing them.
+
+#### pylint vs flake8: When to Use Each
+
+**Use flake8 when:**
+- You want fast, focused checks on style and simple errors
+- You're starting with linting and want quick wins
+- You need minimal configuration
+- You want to run checks quickly in CI/CD
+
+**Use pylint when:**
+- You want comprehensive code analysis
+- You need refactoring suggestions and design feedback
+- You want detailed code quality metrics
+- You're maintaining large codebases with high quality standards
+- You want to catch complex issues and code smells
+
+**Best practice**: Use both! Run flake8 for quick feedback during development, and run pylint periodically for deeper analysis.
+
+#### Integrating pylint with pytest
+
+You can run pylint checks as part of your test suite. Create a test file:
+
+##### Listing 5-12: `test_pylint.py` - Running pylint in Tests
+
+```python
+"""Test that runs pylint on the codebase."""
+
+import subprocess
+import sys
+
+
+def test_pylint_score():
+    """Ensure pylint score meets minimum threshold."""
+    result = subprocess.run(
+        ["pylint", "calculator.py"],
+        capture_output=True,
+        text=True,
+        check=False
+    )
+    
+    # Extract score from output
+    for line in result.stdout.split('\n'):
+        if 'Your code has been rated at' in line:
+            # Parse: "Your code has been rated at 8.50/10"
+            score_str = line.split('at ')[1].split('/')[0]
+            score = float(score_str)
+            
+            # Require minimum score of 8.0
+            assert score >= 8.0, f"pylint score {score} below minimum 8.0"
+            print(f"✓ pylint score: {score}/10")
+            return
+    
+    # If we couldn't parse the score, fail the test
+    pytest.fail("Could not determine pylint score")
+
+
+def test_pylint_no_errors():
+    """Ensure no pylint errors (E) or fatal (F) messages."""
+    result = subprocess.run(
+        ["pylint", "calculator.py"],
+        capture_output=True,
+        text=True,
+        check=False
+    )
+    
+    # Check for error or fatal messages
+    errors = []
+    for line in result.stdout.split('\n'):
+        if ':E' in line or ':F' in line:
+            errors.append(line)
+    
+    assert not errors, f"Found pylint errors:\n" + "\n".join(errors)
+```
+
+#### Running pylint in CI/CD
+
+Add pylint checks to your GitHub Actions workflow:
+
+```yaml
+- name: Run pylint
+  run: |
+    pip install pylint
+    pylint src/ --fail-under=8.0
+```
+
+The `--fail-under` flag causes pylint to exit with an error if the score is below the threshold.
+
+#### Best Practices for Using pylint
+
+1. **Start Gradually**: Don't expect a perfect 10/10 score immediately
+2. **Set Realistic Thresholds**: Start with a minimum score of 7.0-8.0
+3. **Disable Selectively**: Disable messages that don't apply to your project
+4. **Focus on Errors First**: Fix E and F messages before addressing C and R
+5. **Configure Once**: Create a `.pylintrc` that matches your team's standards
+6. **Review Regularly**: Run pylint periodically, not just in CI/CD
+7. **Balance with Pragmatism**: Sometimes breaking a rule is justified—document why
+8. **Combine with Other Tools**: Use alongside flake8, black, and mypy
+
+#### Common pylint Configuration Patterns
+
+For **Django projects**, disable false positives:
+
+```ini
+[MESSAGES CONTROL]
+disable=
+    C5121,  # no-member (Django models)
+    R0901,  # too-many-ancestors (Django class-based views)
+
+load-plugins=pylint_django
+```
+
+For **test files**, relax some restrictions:
+
+```ini
+[MESSAGES CONTROL]
+disable=
+    C0116,  # missing-function-docstring
+    R0913,  # too-many-arguments (test fixtures)
+```
+
+For **scripts and small modules**:
+
+```ini
+[DESIGN]
+min-public-methods=1
+max-module-lines=500
+```
+
+#### pylint Summary
+
+pylint is a powerful tool for maintaining high code quality through comprehensive static analysis. While it can be strict, its detailed feedback helps identify real issues and improvement opportunities.
+
+Key advantages:
+- **Comprehensive Analysis**: Goes beyond style to detect design issues
+- **Quality Metrics**: Provides actionable scores and categorized feedback
+- **Highly Configurable**: Adapts to team standards and project needs
+- **Refactoring Guide**: Suggests improvements to code structure
+- **Educational**: Teaches Python best practices and conventions
+
+Use pylint as part of a comprehensive quality toolkit alongside pytest-cov, flake8, black, and mypy. Together, these tools ensure your code is tested, consistent, maintainable, and high-quality.
+
+
 ##### Listing 5-?: Performance Profiling with `cProfile`
 
 ```python

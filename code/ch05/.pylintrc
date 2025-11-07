@@ -1,0 +1,185 @@
+# pylint configuration file for Chapter 5 examples
+# This file demonstrates common pylint configuration options
+
+[MASTER]
+
+# Use multiple processes to speed up Pylint
+jobs=1
+
+# Pickle collected data for later comparisons
+persistent=yes
+
+# List of plugins (as comma separated values of python modules names)
+load-plugins=
+
+# Discover python modules and packages in the file system subtree
+recursive=no
+
+
+[MESSAGES CONTROL]
+
+# Disable specific messages, reports, categories or checkers
+# C: Convention - for programming standard violation
+# R: Refactor - for bad code smell
+# W: Warning - for python specific problems
+# E: Error - for probable bugs in the code
+# F: Fatal - for errors which prevent pylint from doing further processing
+
+# Disable some messages for demonstration purposes
+disable=
+    # C0111: missing-docstring (we'll enable this selectively)
+    # R0903: too-few-public-methods (often okay for simple classes)
+    # C0103: invalid-name (we'll fix these)
+
+
+[REPORTS]
+
+# Set the output format: text, parseable, colorized, json, msvs
+output-format=text
+
+# Tells whether to display a full report or only the messages
+reports=no
+
+# Activate the evaluation score
+score=yes
+
+
+[BASIC]
+
+# Good variable names which should always be accepted
+good-names=i,j,k,ex,Run,_,x,y,z,id,db,fp
+
+# Bad variable names which should always be refused
+bad-names=foo,bar,baz,toto,tutu,tata
+
+# Include a hint for the correct naming format with invalid-name messages
+include-naming-hint=yes
+
+# Naming style matching correct function names
+function-naming-style=snake_case
+
+# Naming style matching correct variable names
+variable-naming-style=snake_case
+
+# Naming style matching correct constant names
+const-naming-style=UPPER_CASE
+
+# Naming style matching correct class names
+class-naming-style=PascalCase
+
+# Naming style matching correct module names
+module-naming-style=snake_case
+
+# Naming style matching correct method names
+method-naming-style=snake_case
+
+# Naming style matching correct attribute names
+attr-naming-style=snake_case
+
+# Naming style matching correct argument names
+argument-naming-style=snake_case
+
+
+[FORMAT]
+
+# Maximum number of characters on a single line
+max-line-length=88
+
+# Maximum number of lines in a module
+max-module-lines=1000
+
+# String used as indentation unit (4 spaces is standard)
+indent-string='    '
+
+# Number of spaces of indent required inside a hanging or continued line
+indent-after-paren=4
+
+
+[DESIGN]
+
+# Maximum number of arguments for function / method
+max-args=5
+
+# Maximum number of attributes for a class
+max-attributes=7
+
+# Maximum number of boolean expressions in an if statement
+max-bool-expr=5
+
+# Maximum number of branch for function / method body
+max-branches=12
+
+# Maximum number of locals for function / method body
+max-locals=15
+
+# Maximum number of parents for a class
+max-parents=7
+
+# Maximum number of public methods for a class
+max-public-methods=20
+
+# Maximum number of return / yield for function / method body
+max-returns=6
+
+# Maximum number of statements in function / method body
+max-statements=50
+
+# Minimum number of public methods for a class
+min-public-methods=2
+
+
+[SIMILARITIES]
+
+# Minimum lines number of a similarity
+min-similarity-lines=4
+
+# Ignore comments when computing similarities
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities
+ignore-imports=no
+
+
+[VARIABLES]
+
+# Tells whether we should check for unused import in __init__ files
+init-import=no
+
+# A regular expression matching the name of dummy variables
+dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
+
+
+[IMPORTS]
+
+# Deprecated modules which should not be used
+deprecated-modules=optparse,imp
+
+# Create a graph of every (i.e. internal and external) dependencies
+import-graph=
+
+# Create a graph of external dependencies
+ext-import-graph=
+
+# Create a graph of internal dependencies
+int-import-graph=
+
+
+[CLASSES]
+
+# List of method names used to declare instance attributes
+defining-attr-methods=__init__,__new__,setUp
+
+# List of valid names for the first argument in a class method
+valid-classmethod-first-arg=cls
+
+# List of valid names for the first argument in a metaclass class method
+valid-metaclass-classmethod-first-arg=mcs
+
+
+[EXCEPTIONS]
+
+# Exceptions that will emit a warning when being caught
+overgeneral-exceptions=builtins.BaseException,builtins.Exception
