@@ -1,6 +1,6 @@
 # Chapter 5: Code Analysis - Code Examples
 
-This directory contains code examples demonstrating code coverage analysis with pytest-cov, linting with flake8, code formatting with black, and advanced static analysis with pylint, as covered in Chapter 5 of "Upskill in Testing with Python".
+This directory contains code examples demonstrating code coverage analysis with pytest-cov, linting with flake8, code formatting with black, advanced static analysis with pylint, and type checking with mypy, as covered in Chapter 5 of "Upskill in Testing with Python".
 
 ## Overview
 
@@ -9,6 +9,7 @@ The examples demonstrate:
 2. How to identify and fix code style violations using flake8
 3. How to automatically format code using black
 4. How to perform comprehensive static analysis using pylint
+5. How to add type hints and perform static type checking with mypy
 
 ## Files in This Directory
 
@@ -20,6 +21,9 @@ The examples demonstrate:
 - **`example_formatted.py`** - The same code after black automatic formatting.
 - **`example_with_pylint_issues.py`** - Python code with various pylint warnings demonstrating common issues.
 - **`example_pylint_clean.py`** - The same functionality refactored to achieve a perfect 10/10 pylint score.
+- **`example_without_types.py`** - Code without type hints, demonstrating potential runtime type errors.
+- **`example_with_types.py`** - The same code with comprehensive type annotations for static type checking.
+- **`example_mypy_errors.py`** - Code with intentional type errors to demonstrate what mypy catches.
 
 ### Test Files
 - **`test_calculator_basic.py`** - Basic test suite with intentionally incomplete coverage (~69%), demonstrating what happens when you don't test all code paths.
@@ -28,15 +32,16 @@ The examples demonstrate:
 ### Configuration Files
 - **`.flake8`** - Configuration file for flake8 with common settings and customizations (black-compatible).
 - **`.pylintrc`** - Configuration file for pylint with project-specific settings.
-- **`pyproject.toml`** - Configuration file for black with project-specific settings.
+- **`mypy.ini`** - Configuration file for mypy type checking.
+- **`pyproject.toml`** - Unified configuration file for black and mypy with project-specific settings.
 - **`pre-commit-config.yaml`** - Pre-commit hook configuration for black.
 
 ## Prerequisites
 
-Ensure you have pytest, pytest-cov, flake8, black, and pylint installed:
+Ensure you have pytest, pytest-cov, flake8, black, pylint, and mypy installed:
 
 ```bash
-pip install pytest pytest-cov flake8 black pylint
+pip install pytest pytest-cov flake8 black pylint mypy
 ```
 
 ## Running the Examples
@@ -645,7 +650,110 @@ Try these exercises to deepen your understanding:
 
 16. **Write code with both high coverage and clean style** - Create a small module with tests achieving 100% coverage and zero flake8 violations
 
-12. **Create a quality checklist** - Develop a checklist combining coverage targets and linting standards for your projects
+17. **Create a quality checklist** - Develop a checklist combining coverage targets and linting standards for your projects
+
+### Type Checking Examples
+
+#### Example 1: Code Without Type Hints
+
+Examine code without type annotations:
+
+```bash
+cat example_without_types.py
+```
+
+This code works at runtime but lacks type safety. mypy will provide minimal checking.
+
+#### Example 2: Adding Type Hints
+
+Compare the same code with comprehensive type annotations:
+
+```bash
+cat example_with_types.py
+```
+
+Notice how type hints make the code more self-documenting and enable static type checking.
+
+#### Example 3: Running mypy
+
+Check for type errors using mypy:
+
+```bash
+# Check code with type hints
+mypy example_with_types.py
+
+# Should report: Success: no issues found
+```
+
+#### Example 4: Catching Type Errors
+
+Run mypy on code with intentional type errors:
+
+```bash
+# Check code with type errors
+mypy example_mypy_errors.py --show-error-codes
+
+# Shows detailed type errors with error codes
+```
+
+#### Example 5: mypy Configuration
+
+Use a configuration file for project-specific settings:
+
+```bash
+# Using mypy.ini
+mypy --config-file mypy.ini example_with_types.py
+
+# Or using pyproject.toml (automatically detected)
+mypy example_with_types.py
+```
+
+#### Example 6: Strict Mode
+
+Enable strict type checking for maximum safety:
+
+```bash
+mypy --strict example_with_types.py
+```
+
+Strict mode requires:
+- Type annotations on all functions
+- No implicit Optional types
+- No Any types
+- Comprehensive error checking
+
+#### Example 7: Incremental Typing
+
+For existing projects, adopt mypy gradually:
+
+```bash
+# Start with minimal checking
+mypy --ignore-missing-imports .
+
+# Add types to one module at a time
+mypy --strict new_module.py
+
+# Use type: ignore for legacy code
+# my_var = legacy_function()  # type: ignore
+```
+
+### Type Checking Exercises
+
+18. **Add type hints to untested code** - Take example_without_types.py and add comprehensive type annotations
+
+19. **Fix type errors** - Correct all the type errors in example_mypy_errors.py
+
+20. **Run mypy on your project** - Install mypy and run it on an existing Python project
+
+21. **Enable strict mode incrementally** - Start with basic mypy checking and gradually increase strictness
+
+22. **Type hint a function** - Take any Python function and add complete type annotations including parameters and return type
+
+23. **Create Protocol types** - Define a Protocol for structural typing (duck typing with type safety)
+
+24. **Use Union and Optional** - Practice using Union types and Optional for functions with multiple input/output types
+
+25. **Configure mypy** - Create a mypy.ini or update pyproject.toml with project-specific type checking rules
 
 ## Troubleshooting
 
@@ -697,6 +805,38 @@ Ensure `.pylintrc` is in the current directory or specify it with `--rcfile=.pyl
 **False positives**
 Use `# pylint: disable=message-name` to suppress specific checks on individual lines or blocks when justified.
 
+### mypy Issues
+
+**mypy not recognized**
+```bash
+pip install mypy
+```
+
+**Too many errors in existing code**
+Use `# type: ignore` comments temporarily and adopt types gradually. Start with new code.
+
+**Missing type stubs for third-party libraries**
+```bash
+# Install type stubs for common libraries
+pip install types-requests types-redis types-PyYAML
+
+# Or let mypy install them
+mypy --install-types
+```
+
+**Configuration not being read**
+Ensure `mypy.ini` is in the current directory or use `--config-file` flag. Alternatively, add `[tool.mypy]` section to `pyproject.toml`.
+
+**False positives**
+Use `# type: ignore[error-code]` to suppress specific type errors when they're incorrect. Document why.
+
+**Can't check third-party library**
+Add to mypy configuration:
+```ini
+[mypy-third_party_module.*]
+ignore_missing_imports = True
+```
+
 ### Integration Issues
 
 **black and flake8 conflict**
@@ -713,6 +853,7 @@ These examples demonstrate the power of combining multiple code analysis tools:
 - **Linting (flake8)**: Checks code style and quality, enforcing PEP 8 standards and catching potential bugs
 - **Code Formatting (black)**: Automatically formats code for consistency, eliminating style debates
 - **Static Analysis (pylint)**: Performs deep code analysis, detecting design issues, complexity problems, and code smells
+- **Type Checking (mypy)**: Validates type correctness through static analysis, catching type-related bugs before runtime
 
 Coverage metrics provide objective data about which parts of your code are tested, guiding you toward more comprehensive and reliable tests. However, remember that high coverage is a means to an end—the goal is confidence that your code works correctly, not just high percentages.
 

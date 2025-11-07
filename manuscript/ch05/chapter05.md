@@ -1985,7 +1985,879 @@ Key advantages:
 Use pylint as part of a comprehensive quality toolkit alongside pytest-cov, flake8, black, and mypy. Together, these tools ensure your code is tested, consistent, maintainable, and high-quality.
 
 
-##### Listing 5-?: Performance Profiling with `cProfile`
+### Type Checking with mypy
+
+While linters like flake8 and pylint check code style and quality, they don't verify type correctness. Python is dynamically typed, meaning type errors only surface at runtime—often in production. mypy brings static type checking to Python, allowing you to catch type-related bugs during development before your code ever runs.
+
+#### Understanding Python's Type System
+
+Python's flexibility comes from dynamic typing: variables can hold any type, and types are checked at runtime. This offers convenience but introduces risks:
+
+```python
+def calculate_total(price, quantity):
+    return price * quantity
+
+# These all work at runtime (until they don't)
+calculate_total(10.50, 2)      # Correct: 21.00
+calculate_total("10.50", 2)    # Dubious: "10.5010.50"
+calculate_total(10.50, "2")    # TypeError at runtime!
+```
+
+Without type hints, these errors only appear when the code executes. With type annotations and mypy, you catch them during development.
+
+Python 3.5+ introduced type hints through PEP 484, allowing optional type annotations:
+
+```python
+def calculate_total(price: float, quantity: int) -> float:
+    return price * quantity
+```
+
+Type hints serve multiple purposes:
+- **Documentation**: Make function interfaces explicit
+- **IDE Support**: Enable better autocomplete and refactoring
+- **Static Analysis**: Allow tools like mypy to verify correctness
+- **Runtime Validation**: Can be used with libraries like pydantic
+
+Importantly, type hints are optional and don't affect runtime behavior—they're ignored by the Python interpreter unless you explicitly use them with validation libraries.
+
+#### Why Use mypy?
+
+mypy offers compelling benefits:
+
+**Catch Bugs Early:**
+Type errors are detected during static analysis, not at runtime:
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name.upper()}"
+
+greet(42)  # mypy catches this: int not compatible with str
+```
+
+**Improve Code Quality:**
+Type hints make code more self-documenting and easier to understand:
+```python
+# Without types - what do these parameters mean?
+def process_order(customer, items, discount):
+    pass
+
+# With types - crystal clear
+def process_order(
+    customer: str, 
+    items: List[Dict[str, Union[str, float]]], 
+    discount: float
+) -> float:
+    pass
+```
+
+**Enhanced IDE Experience:**
+Modern IDEs use type hints for intelligent code completion, navigation, and refactoring.
+
+**Gradual Adoption:**
+mypy works with partially annotated codebases, allowing incremental adoption without requiring full type coverage upfront.
+
+**Prevent Runtime Errors:**
+Many bugs that would require defensive programming or extensive testing are caught automatically:
+```python
+def get_user_email(user: Optional[Dict[str, str]]) -> str:
+    return user['email']  # mypy error: user might be None
+```
+
+#### Installing mypy
+
+Install mypy using pip:
+
+```bash
+pip install mypy
+```
+
+mypy requires Python 3.7 or later and works with code targeting Python 3.7+.
+
+#### Running mypy
+
+Run mypy on files or directories:
+
+```bash
+# Check a single file
+mypy myfile.py
+
+# Check all Python files in a directory
+mypy mypackage/
+
+# Check specific files
+mypy file1.py file2.py file3.py
+
+# Show error codes with messages
+mypy --show-error-codes myfile.py
+
+# Strict mode (more rigorous checking)
+mypy --strict myfile.py
+```
+
+#### Type Annotations Basics
+
+Let's start with fundamental type annotations.
+
+**Basic Types:**
+
+```python
+# Primitive types
+name: str = "Alice"
+age: int = 30
+height: float = 5.7
+is_active: bool = True
+
+# Function annotations
+def greet(name: str) -> str:
+    """Return a greeting message."""
+    return f"Hello, {name}"
+
+def add(a: int, b: int) -> int:
+    """Add two integers."""
+    return a + b
+```
+
+**Collection Types:**
+
+```python
+from typing import List, Dict, Set, Tuple
+
+# Lists
+numbers: List[int] = [1, 2, 3, 4]
+names: List[str] = ["Alice", "Bob"]
+
+# Dictionaries
+user: Dict[str, str] = {"name": "Alice", "email": "alice@example.com"}
+ages: Dict[str, int] = {"Alice": 30, "Bob": 25}
+
+# Sets
+unique_ids: Set[int] = {1, 2, 3}
+
+# Tuples (fixed size)
+point: Tuple[int, int] = (10, 20)
+person: Tuple[str, int, bool] = ("Alice", 30, True)
+```
+
+**Optional Types:**
+
+```python
+from typing import Optional
+
+# Optional[str] is equivalent to Union[str, None]
+def find_user(user_id: int) -> Optional[str]:
+    """Find user by ID, return None if not found."""
+    if user_id in users:
+        return users[user_id]
+    return None
+
+# Using Optional in parameters
+def greet(name: str, title: Optional[str] = None) -> str:
+    """Greet with optional title."""
+    if title:
+        return f"Hello, {title} {name}"
+    return f"Hello, {name}"
+```
+
+**Union Types:**
+
+```python
+from typing import Union
+
+# Accept multiple types
+def format_id(id_value: Union[int, str]) -> str:
+    """Format an ID as string."""
+    return str(id_value)
+
+# Multiple possible return types
+def divide(a: float, b: float) -> Union[float, str]:
+    """Divide a by b, return error message if b is zero."""
+    if b == 0:
+        return "Cannot divide by zero"
+    return a / b
+```
+
+#### Example: Code Without Type Hints
+
+Consider this module without type annotations:
+
+##### Listing 5-15: `example_without_types.py` - No Type Hints
+
+```python
+"""Example module without type hints."""
+
+def calculate_discount(price, discount_percent):
+    """Calculate the discounted price."""
+    discount = price * (discount_percent / 100)
+    return price - discount
+
+
+class ShoppingCart:
+    """Shopping cart without type hints."""
+    
+    def __init__(self):
+        self.items = []
+        self.discount_rate = 0
+    
+    def add_item(self, name, price, quantity=1):
+        """Add an item to the cart."""
+        self.items.append({
+            'name': name,
+            'price': price,
+            'quantity': quantity
+        })
+    
+    def get_total(self):
+        """Calculate total price with discount."""
+        subtotal = sum(item['price'] * item['quantity'] for item in self.items)
+        discount = subtotal * (self.discount_rate / 100)
+        return subtotal - discount
+
+
+def safe_divide(numerator, denominator):
+    """Safely divide two numbers."""
+    if denominator == 0:
+        return None
+    return numerator / denominator
+```
+
+This code works but offers no type safety. Running mypy without type hints produces limited checking.
+
+#### Example: Code With Type Hints
+
+Now let's add comprehensive type annotations:
+
+##### Listing 5-16: `example_with_types.py` - With Type Hints
+
+```python
+"""Example module with comprehensive type hints."""
+
+from typing import Dict, List, Optional, Union
+
+
+def calculate_discount(price: float, discount_percent: float) -> float:
+    """
+    Calculate the discounted price.
+    
+    Args:
+        price: Original price
+        discount_percent: Discount percentage (0-100)
+    
+    Returns:
+        Price after discount applied
+    """
+    discount = price * (discount_percent / 100)
+    return price - discount
+
+
+class ShoppingCart:
+    """Shopping cart with proper type hints."""
+    
+    def __init__(self) -> None:
+        """Initialize an empty shopping cart."""
+        self.items: List[Dict[str, Union[str, float, int]]] = []
+        self.discount_rate: float = 0.0
+    
+    def add_item(self, name: str, price: float, quantity: int = 1) -> None:
+        """
+        Add an item to the cart.
+        
+        Args:
+            name: Item name
+            price: Item price
+            quantity: Number of items
+        """
+        self.items.append({
+            'name': name,
+            'price': price,
+            'quantity': quantity
+        })
+    
+    def get_total(self) -> float:
+        """
+        Calculate the total price with discount.
+        
+        Returns:
+            Total price after discount
+        """
+        subtotal = sum(
+            float(item['price']) * int(item['quantity']) 
+            for item in self.items
+        )
+        discount = subtotal * (self.discount_rate / 100)
+        return subtotal - discount
+
+
+def safe_divide(numerator: float, denominator: float) -> Optional[float]:
+    """
+    Safely divide two numbers.
+    
+    Args:
+        numerator: Number to be divided
+        denominator: Number to divide by
+    
+    Returns:
+        Result of division, or None if denominator is zero
+    """
+    if denominator == 0:
+        return None
+    return numerator / denominator
+```
+
+With type hints, mypy can verify type correctness and catch potential errors before runtime.
+
+#### Common mypy Errors and How to Fix Them
+
+Let's examine typical type errors mypy catches:
+
+##### Listing 5-17: `example_mypy_errors.py` - Common Type Errors
+
+```python
+"""Example demonstrating common mypy errors."""
+
+from typing import List, Dict, Optional, Union
+
+
+def add_numbers(a: int, b: int) -> int:
+    """Add two integers."""
+    return a + b
+
+
+# Error 1: Argument type mismatch
+result = add_numbers(5, "10")
+# error: Argument 2 to "add_numbers" has incompatible type "str"; expected "int"
+
+
+# Error 2: Return type mismatch
+def get_double(x: int) -> int:
+    """Double a number."""
+    return x * 2.0
+# error: Incompatible return value type (got "float", expected "int")
+
+
+# Error 3: Incompatible assignment
+age: int = 25
+age = "twenty-five"
+# error: Incompatible types in assignment (expression has type "str", variable has type "int")
+
+
+# Error 4: None type error
+def get_length(text: str) -> int:
+    """Get text length."""
+    return len(text)
+
+value: Optional[str] = None
+length = get_length(value)
+# error: Argument 1 to "get_length" has incompatible type "Optional[str]"; expected "str"
+
+
+# Error 5: Missing return
+def calculate_discount(price: float, rate: float) -> float:
+    """Calculate discounted price."""
+    if price > 0:
+        return price * (1 - rate / 100)
+# error: Missing return statement
+
+
+# Error 6: Attribute error
+class User:
+    def __init__(self, name: str, age: int) -> None:
+        self.name = name
+        self.age = age
+
+user = User("Alice", 30)
+print(user.email)
+# error: "User" has no attribute "email"
+
+
+# Error 7: List type mismatch
+numbers: List[int] = [1, 2, 3]
+numbers.append("four")
+# error: Argument 1 to "append" of "list" has incompatible type "str"; expected "int"
+
+
+# Error 8: Using Optional incorrectly
+def greet(name: Optional[str]) -> str:
+    """Greet user."""
+    return f"Hello, {name.upper()}"
+# error: Item "None" of "Optional[str]" has no attribute "upper"
+
+
+# Error 9: Union type without narrowing
+def format_value(value: Union[int, str]) -> str:
+    """Format a value."""
+    return value.upper()
+# error: Item "int" of "Union[int, str]" has no attribute "upper"
+```
+
+Running mypy on this file:
+
+```bash
+$ mypy example_mypy_errors.py
+
+example_mypy_errors.py:13: error: Argument 2 to "add_numbers" has incompatible type "str"; expected "int"
+example_mypy_errors.py:19: error: Incompatible return value type (got "float", expected "int")
+example_mypy_errors.py:24: error: Incompatible types in assignment (expression has type "str", variable has type "int")
+example_mypy_errors.py:33: error: Argument 1 to "get_length" has incompatible type "Optional[str]"; expected "str"
+example_mypy_errors.py:38: error: Missing return statement
+example_mypy_errors.py:48: error: "User" has no attribute "email"
+example_mypy_errors.py:53: error: Argument 1 to "append" of "list" has incompatible type "str"; expected "int"
+example_mypy_errors.py:59: error: Item "None" of "Optional[str]" has no attribute "upper"
+example_mypy_errors.py:65: error: Item "int" of "Union[int, str]" has no attribute "upper"
+Found 9 errors in 1 file (checked 1 source file)
+```
+
+#### Fixing Common Type Errors
+
+**Fix 1: Argument Type Mismatch**
+
+```python
+# Wrong
+result = add_numbers(5, "10")
+
+# Fixed - convert to correct type
+result = add_numbers(5, int("10"))
+
+# Or use correct type from start
+result = add_numbers(5, 10)
+```
+
+**Fix 2: Return Type Mismatch**
+
+```python
+# Wrong
+def get_double(x: int) -> int:
+    return x * 2.0
+
+# Fixed - ensure return type matches
+def get_double(x: int) -> int:
+    return x * 2
+
+# Or change return type annotation
+def get_double(x: int) -> float:
+    return x * 2.0
+```
+
+**Fix 3: None Type Handling**
+
+```python
+# Wrong
+def get_length(text: str) -> int:
+    return len(text)
+
+value: Optional[str] = None
+length = get_length(value)
+
+# Fixed - check for None first
+if value is not None:
+    length = get_length(value)
+else:
+    length = 0
+
+# Or use default value
+length = get_length(value) if value is not None else 0
+```
+
+**Fix 4: Union Type Narrowing**
+
+```python
+# Wrong
+def format_value(value: Union[int, str]) -> str:
+    return value.upper()
+
+# Fixed - use type narrowing
+def format_value(value: Union[int, str]) -> str:
+    if isinstance(value, str):
+        return value.upper()
+    return str(value)
+```
+
+**Fix 5: Optional Attribute Access**
+
+```python
+# Wrong
+def greet(name: Optional[str]) -> str:
+    return f"Hello, {name.upper()}"
+
+# Fixed - handle None case
+def greet(name: Optional[str]) -> str:
+    if name is None:
+        return "Hello, Guest"
+    return f"Hello, {name.upper()}"
+```
+
+#### Advanced Type Hints
+
+**Type Aliases:**
+
+```python
+from typing import Dict, List, Union
+
+# Define type aliases for complex types
+UserId = int
+UserData = Dict[str, Union[str, int]]
+UserList = List[UserData]
+
+def get_user(user_id: UserId) -> UserData:
+    """Get user data by ID."""
+    return {"name": "Alice", "age": 30}
+
+def get_all_users() -> UserList:
+    """Get all users."""
+    return [
+        {"name": "Alice", "age": 30},
+        {"name": "Bob", "age": 25}
+    ]
+```
+
+**Generic Functions:**
+
+```python
+from typing import TypeVar, List
+
+T = TypeVar('T')
+
+def get_first(items: List[T]) -> Optional[T]:
+    """Get first item from list."""
+    return items[0] if items else None
+
+# Type is inferred from usage
+first_number: Optional[int] = get_first([1, 2, 3])
+first_name: Optional[str] = get_first(["Alice", "Bob"])
+```
+
+**Callable Types:**
+
+```python
+from typing import Callable
+
+def apply_operation(
+    value: int, 
+    operation: Callable[[int], int]
+) -> int:
+    """Apply operation to value."""
+    return operation(value)
+
+def double(x: int) -> int:
+    """Double a number."""
+    return x * 2
+
+result = apply_operation(5, double)  # Type-safe
+```
+
+**Protocol (Structural Typing):**
+
+```python
+from typing import Protocol
+
+class Drawable(Protocol):
+    """Protocol for drawable objects."""
+    def draw(self) -> None:
+        ...
+
+class Circle:
+    """Circle class."""
+    def draw(self) -> None:
+        print("Drawing circle")
+
+class Square:
+    """Square class."""
+    def draw(self) -> None:
+        print("Drawing square")
+
+def render(shape: Drawable) -> None:
+    """Render a drawable shape."""
+    shape.draw()
+
+# Both work - structural typing
+render(Circle())
+render(Square())
+```
+
+#### Configuring mypy
+
+Create a `mypy.ini` file or add configuration to `pyproject.toml`:
+
+##### Listing 5-18: `mypy.ini` - Configuration File
+
+```ini
+[mypy]
+# Specify Python version
+python_version = 3.11
+
+# Strictness options
+warn_return_any = True
+warn_unused_configs = True
+disallow_untyped_defs = False
+disallow_any_generics = False
+
+# Error output
+show_error_codes = True
+show_column_numbers = True
+pretty = True
+
+# Import discovery
+mypy_path = src
+namespace_packages = True
+
+# Exclude directories
+exclude = (?x)(
+    ^build/
+    | ^dist/
+    | ^\.venv/
+    | ^venv/
+    | ^__pycache__/
+  )
+
+# Per-module options
+[mypy-tests.*]
+disallow_untyped_defs = False
+
+[mypy-third_party_module.*]
+ignore_missing_imports = True
+```
+
+##### Listing 5-19: `pyproject.toml` - mypy Configuration
+
+```toml
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+# Output options
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+
+# Exclude patterns
+exclude = [
+    "build/",
+    "dist/",
+    ".venv/",
+    "venv/",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "third_party.*"
+ignore_missing_imports = true
+```
+
+**Key Configuration Options:**
+
+- **python_version**: Target Python version
+- **disallow_untyped_defs**: Require type annotations on all functions
+- **disallow_any_generics**: Disallow generic types without parameters
+- **warn_return_any**: Warn when returning Any type
+- **warn_unused_ignores**: Warn about unnecessary `# type: ignore` comments
+- **strict**: Enable all strict checking options
+- **ignore_missing_imports**: Don't error on untyped third-party packages
+
+#### Gradual Typing Strategy
+
+For existing codebases, adopt mypy gradually:
+
+**Phase 1: Run mypy without changes**
+
+```bash
+# See what errors exist
+mypy --ignore-missing-imports .
+```
+
+**Phase 2: Suppress existing errors**
+
+```python
+# Add type: ignore for now
+result = legacy_function()  # type: ignore
+```
+
+**Phase 3: Add types to new code**
+
+```python
+# All new functions get type hints
+def new_feature(data: List[str]) -> Dict[str, int]:
+    """Process new feature."""
+    pass
+```
+
+**Phase 4: Incrementally type existing code**
+
+Start with:
+- Public APIs
+- Core business logic
+- Frequently changed modules
+- Bug-prone areas
+
+**Phase 5: Enable stricter checking**
+
+```ini
+[mypy]
+disallow_untyped_defs = True
+warn_return_any = True
+```
+
+#### Integrating mypy with Development Workflow
+
+**Pre-commit Hooks:**
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.7.1
+    hooks:
+      - id: mypy
+        args: [--strict, --ignore-missing-imports]
+        additional_dependencies: [types-requests]
+```
+
+**CI/CD Integration:**
+
+```yaml
+# GitHub Actions
+- name: Type check with mypy
+  run: |
+    pip install mypy
+    mypy src/ --config-file mypy.ini
+```
+
+**IDE Integration:**
+
+Most IDEs support mypy:
+- VS Code: Python extension includes mypy support
+- PyCharm: Built-in type checking
+- Vim/Neovim: ALE, coc-pyright plugins
+
+**Running with pytest:**
+
+```bash
+# Install pytest-mypy
+pip install pytest-mypy
+
+# Run type checking with tests
+pytest --mypy
+```
+
+#### Type Stubs for Third-Party Libraries
+
+Many libraries lack type hints. Install type stubs:
+
+```bash
+# Install stubs for common libraries
+pip install types-requests
+pip install types-redis
+pip install types-PyYAML
+
+# Or install all stubs mypy needs
+mypy --install-types
+```
+
+Create custom stubs for libraries without them:
+
+```python
+# stubs/untyped_lib.pyi
+def some_function(arg: str) -> int: ...
+
+class SomeClass:
+    def method(self, x: float) -> bool: ...
+```
+
+#### Best Practices for Type Hints
+
+1. **Start with Public APIs**: Type annotate public functions and classes first
+2. **Use Specific Types**: Prefer `List[str]` over `List`, avoid `Any` when possible
+3. **Leverage Optional**: Use `Optional[T]` for values that can be None
+4. **Document with Types**: Type hints enhance, don't replace, docstrings
+5. **Don't Over-Annotate**: Local variables often don't need annotations
+6. **Use Type Aliases**: Create aliases for complex, repeated types
+7. **Run Regularly**: Include mypy in CI/CD and pre-commit hooks
+8. **Incremental Adoption**: Add types gradually to existing codebases
+9. **Test Type Annotations**: Ensure type hints match runtime behavior
+10. **Stay Consistent**: Establish team conventions for type annotation style
+
+#### When to Skip Type Hints
+
+Type hints aren't always necessary:
+
+- **One-off scripts**: Quick scripts with short lifespans
+- **Highly dynamic code**: Code that genuinely needs runtime flexibility
+- **Performance-critical paths**: Type checking adds minimal overhead, but annotations increase file size
+- **Prototypes**: Early exploration where interfaces are unstable
+
+However, even these benefit from types as they mature.
+
+#### Common Pitfalls and Solutions
+
+**Pitfall 1: Overusing Any**
+
+```python
+# Bad - defeats purpose of type checking
+def process(data: Any) -> Any:
+    return data
+
+# Good - be specific
+def process(data: List[Dict[str, str]]) -> Dict[str, int]:
+    return {item['key']: len(item['value']) for item in data}
+```
+
+**Pitfall 2: Forgetting None in Optional**
+
+```python
+# Bad - mypy error if None passed
+def greet(name: str) -> str:
+    if name is None:
+        return "Hello, Guest"
+    return f"Hello, {name}"
+
+# Good - explicitly allow None
+def greet(name: Optional[str]) -> str:
+    if name is None:
+        return "Hello, Guest"
+    return f"Hello, {name}"
+```
+
+**Pitfall 3: Mutable Default Arguments**
+
+```python
+# Bad - mypy warning and runtime bug
+def append_to(value: int, target: List[int] = []) -> List[int]:
+    target.append(value)
+    return target
+
+# Good - use None and create new list
+def append_to(value: int, target: Optional[List[int]] = None) -> List[int]:
+    if target is None:
+        target = []
+    target.append(value)
+    return target
+```
+
+#### mypy Summary
+
+mypy brings static type checking to Python, catching bugs early and improving code quality without sacrificing Python's dynamic nature. Type hints serve as documentation, enable better tooling, and provide confidence that code behaves as intended.
+
+**Key Benefits:**
+- **Early Error Detection**: Catch type errors during development
+- **Self-Documenting**: Type hints clarify function interfaces
+- **Better IDE Support**: Enhanced autocomplete and refactoring
+- **Gradual Adoption**: Add types incrementally to existing code
+- **No Runtime Cost**: Type hints don't affect execution performance
+
+**Getting Started:**
+1. Install mypy: `pip install mypy`
+2. Add basic type hints to new code
+3. Run mypy: `mypy yourmodule.py`
+4. Fix errors systematically
+5. Integrate into CI/CD pipeline
+6. Gradually expand type coverage
+
+Combined with pytest-cov (coverage), flake8 (linting), black (formatting), and pylint (quality), mypy completes a comprehensive code analysis toolkit. Together, these tools ensure your Python code is not only functional and tested but also type-safe, maintainable, and high-quality.
+
+
+##### Listing 5-20: Performance Profiling with `cProfile`
 
 ```python
 import cProfile
