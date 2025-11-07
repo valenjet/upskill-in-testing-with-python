@@ -268,6 +268,10 @@ This chapter's examples demonstrate:
 
 When running all Chapter 4 tests:
 
+```bash
+pytest code/ch04/ -v
+```
+
 **test_user_registration.py:**
 - ✅ 4 passed - All registration scenarios work correctly
 
@@ -281,4 +285,167 @@ When running all Chapter 4 tests:
 - Demonstrates: session (2 tests), module (3 tests), function-scoped fixtures (18 tests)
 - Shows: transaction isolation, fixture factories, temporary files, fixture combinations
 
-Total: 49 passed, 4 skipped, 3 xfailed
+**test_plugins_demo.py:**
+- ✅ 24 passed - All tests that don't require optional plugins
+- ⏭️ 4 skipped - Tests requiring pytest-timeout (if not installed)
+- Demonstrates: timeout concepts, parallel execution, built-in fixtures
+- Optional: Install pytest-timeout to run all 28 tests
+
+**Total (without optional plugins):**
+- ✅ 73 passed
+- ⏭️ 8 skipped (4 markers + 4 plugins)
+- ✖️ 3 xfailed
+
+**Total (with pytest-timeout installed):**
+- ✅ 77 passed
+- ⏭️ 4 skipped (only marker examples)
+- ✖️ 3 xfailed
+
+---
+
+## Plugin Installation (Optional but Recommended)
+
+To get the most out of Chapter 4 examples, install these plugins:
+
+```bash
+# Essential plugins for development
+pip install pytest-timeout pytest-xdist
+
+# Enhanced features
+pip install pytest-mock pytest-cov
+
+# Reporting and UI
+pip install pytest-html pytest-sugar
+
+# All at once
+pip install pytest-timeout pytest-xdist pytest-mock pytest-cov pytest-html pytest-sugar
+```
+
+### What Each Plugin Does
+
+- **pytest-timeout**: Prevents tests from hanging indefinitely
+- **pytest-xdist**: Runs tests in parallel for faster execution
+- **pytest-mock**: Provides mocker fixture for easier mocking
+- **pytest-cov**: Code coverage reporting (covered in Chapter 5)
+- **pytest-html**: Generates attractive HTML test reports
+- **pytest-sugar**: Enhanced progress bar and output
+
+---
+
+---
+
+## test_plugins_demo.py
+
+Demonstrations of pytest plugin usage and built-in features. This example shows:
+
+- **pytest-timeout**: Preventing tests from running indefinitely
+- **pytest-xdist**: Parallel test execution concepts
+- **pytest-mock**: Enhanced mocking (examples provided)
+- **Built-in Fixtures**: capsys, tmp_path, monkeypatch
+- **Plugin Configuration**: Examples of configuring plugins via pytest.ini
+- **Combining Features**: Using multiple plugins together
+
+### Running the Tests
+
+```bash
+# Run all plugin demos
+pytest code/ch04/test_plugins_demo.py -v
+
+# Run with timeout enabled (requires pytest-timeout)
+pytest code/ch04/test_plugins_demo.py --timeout=10
+
+# Run in parallel (requires pytest-xdist)
+pytest code/ch04/test_plugins_demo.py -n auto
+
+# Combine timeout and parallel execution
+pytest code/ch04/test_plugins_demo.py -n 4 --timeout=30
+
+# Run only tests with specific marker
+pytest code/ch04/test_plugins_demo.py -m slow
+```
+
+### Plugin Installation
+
+To use all features in this demo, install the plugins:
+
+```bash
+# Install pytest-timeout for test timeouts
+pip install pytest-timeout
+
+# Install pytest-xdist for parallel execution
+pip install pytest-xdist
+
+# Install pytest-mock for enhanced mocking (optional)
+pip install pytest-mock
+
+# Install pytest-cov for coverage (covered in Chapter 5)
+pip install pytest-cov
+
+# Install all at once
+pip install pytest-timeout pytest-xdist pytest-mock pytest-cov
+```
+
+### Features Demonstrated
+
+**pytest-timeout:**
+- Setting timeouts per test with `@pytest.mark.timeout(seconds)`
+- Thread-based vs signal-based timeouts
+- Global timeout configuration
+- Preventing hung tests
+
+**pytest-xdist:**
+- Tests designed for parallel execution
+- Using `xdist_group` for sequential execution when needed
+- Fixture safety in parallel execution
+- Load balancing strategies
+
+**Built-in Fixtures (no plugins needed):**
+- `capsys` - Capturing stdout/stderr
+- `tmp_path` - Temporary directories and files
+- `monkeypatch` - Modifying environment and attributes
+- `request` - Accessing test context
+
+**Plugin Configuration:**
+- Setting default timeouts in pytest.ini
+- Registering markers for plugin features
+- Command-line option combinations
+
+### Key Plugin Concepts
+
+1. **Plugin Discovery**: pytest automatically loads installed plugins
+2. **Configuration**: Plugins can be configured via pytest.ini, pyproject.toml, or command-line
+3. **Composability**: Plugins work together seamlessly
+4. **Extensibility**: Custom plugins can be created for specific needs
+5. **Community**: Large ecosystem of plugins for various needs
+
+### Common Plugin Workflows
+
+**Development (fast tests with timeout safety):**
+```bash
+pytest -m "unit and not slow" --timeout=5
+```
+
+**CI/CD (parallel with coverage):**
+```bash
+pytest -n auto --timeout=300 --cov=myproject --cov-report=xml
+```
+
+**Debugging (verbose with no timeout):**
+```bash
+pytest -vv --timeout=0 -s
+```
+
+**Integration tests (sequential with longer timeout):**
+```bash
+pytest -m integration --timeout=600
+```
+
+### Notes
+
+- Some tests in this file include commented examples for optional plugins
+- Uncomment pytest-mock examples if you have pytest-mock installed
+- The timeout tests use safe durations to avoid actual timeouts
+- Parallel execution examples use fixtures safe for concurrent access
+
+---
+
